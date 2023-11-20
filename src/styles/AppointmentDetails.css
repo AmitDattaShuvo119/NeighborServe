@@ -1,0 +1,14 @@
+.ad-container1 {
+    width: 800px;
+    height: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2%;
+    /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+}
+
+.ad-container2 {
+    display: flex;
+    margin-left: 43%;
+    margin-top: 1%;
+}

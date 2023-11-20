@@ -4,10 +4,14 @@
 
 /* Include the "Fira Code" font in your CSS file */
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300&display=swap');
-
+@font-face {
+    font-family: 'Söhne';
+    src: url('./TestSöhne-Buch.otf') format('opentype'); /* Use 'truetype' for TTF files */
+  }
 /* Apply the font to your text */
 .staggered-text {
-  font-family: 'Fira Code', monospace; /* Use the 'Fira Code' font and specify 'monospace' as a fallback */
+  /* font-family: 'Fira Code', monospace; */
+  font-family: "Söhne",  sans-serif; /* Use the 'Fira Code' font and specify 'monospace' as a fallback */
 }
 
 

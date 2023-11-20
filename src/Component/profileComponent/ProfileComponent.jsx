@@ -49,7 +49,7 @@ const ProfileComponent = (props) => {
           </div>
         </div>
 
-        <div className="pc-container2">
+        <div className="pc-container2 ">
           <p style={{ fontWeight: "bold", fontSize: "22px", color: "black" }}>
             {user_fullname}
           </p>

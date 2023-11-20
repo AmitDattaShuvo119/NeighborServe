@@ -1,36 +1,34 @@
-import { Link , useLocation, useNavigate  } from "react-router-dom"
-import icon from "../../assets/icon.png"
-import "./index.css"
-import { AuthContext } from "../../Providers/AuthProviders"
-import { useContext, useEffect, useState } from "react"
-import useAdmin from "../../hook/useAdmin"
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import icon from "../../assets/icon.png";
+import "./index.css";
+import { AuthContext } from "../../Providers/AuthProviders";
+import { useContext, useEffect, useState } from "react";
+import useAdmin from "../../hook/useAdmin";
 
-import useUser from "../../hook/useUser"
-import useProvider from "../../hook/useProvider"
-
+import useUser from "../../hook/useUser";
+import useProvider from "../../hook/useProvider";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext)
+  const { user, logout } = useContext(AuthContext);
   // const [isHovering, setIsHovering] = useState(false)
-  const [isAdmin] = useAdmin()
-  const [isProvider] = useProvider()
-  const [isUser] = useUser()
+  const [isAdmin] = useAdmin();
+  const [isProvider] = useProvider();
+  const [isUser] = useUser();
 
-  console.log("admin", isAdmin)
-  console.log("provider", isProvider)
-  console.log("user", isUser)
+  console.log("admin", isAdmin);
+  console.log("provider", isProvider);
+  console.log("user", isUser);
   // console.log(user);
-
 
   const handleLogOut = () => {
     logout()
       .then()
-      .catch(error => {
-        console.log(error)
-      })
-      navigate('/login')
-  }
+      .catch((error) => {
+        console.log(error);
+      });
+    navigate("/login");
+  };
   // const handleMouseEnter = () => {
   //   setIsHovering(true)
   // }
@@ -65,12 +63,12 @@ const Navbar = () => {
               tabIndex={0}
               className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
             >
-              <li className="text-xl">
+              <li className="text-xl s-text">
                 <Link to={"/"}>
-                  <a>Home</a>
+                  <a>About us</a>
                 </Link>
               </li>
-              <li className="text-xl">
+              <li className="text-xl s-text">
                 <Link to={"/browse_service"}>
                   <a>Services</a>
                 </Link>
@@ -94,29 +92,21 @@ const Navbar = () => {
         </div>
         <div style={{ display: "flex", width: "900px" }}>
           <ul>
-            <Link to={"/"} className="text-xl c1 mr-7">
-              Home
-            </Link>
-
-            <Link to={"/browse_service"} className="text-xl c1">
+          <Link to={"/browse_service"} className="text-xl c1 mr-7 s-text">
               Services
             </Link>
+            <Link to={"/"} className="text-xl c1 s-text">
+              About us
+            </Link>
+
+          
             {!user && (
-<<<<<<< HEAD
               <Link to={"/login"} className="text-xl ml-8 c1">
                 Log in
               </Link>
             )}
 
             {/* {user ? (
-=======
-              <Link to={"/reg"} className="text-xl ml-8 c1">
-                Sign Up
-              </Link>
-            )}
-
-            {user ? (
->>>>>>> d94574d6bd6d8e32706e5efad35e020ac444c4e2
               <button className="text-xl mx-8" onClick={handleLogOut}>
                 LogOut
               </button>
@@ -124,13 +114,8 @@ const Navbar = () => {
               <Link to={"/login"} className="text-xl ml-8 mr-8 c1">
                 Log In
               </Link>
-<<<<<<< HEAD
             )} */}
             {/* {isAdmin && (
-=======
-            )}
-            {isAdmin && (
->>>>>>> d94574d6bd6d8e32706e5efad35e020ac444c4e2
               <Link to={"/dashboard/admindashboard"} className="text-xl c1">
                 Dashboard
               </Link>
@@ -144,11 +129,7 @@ const Navbar = () => {
               <Link to={"/dashboard/userdashboard"} className="text-xl c1">
                 Dashboard
               </Link>
-<<<<<<< HEAD
             )} */}
-=======
-            )}
->>>>>>> d94574d6bd6d8e32706e5efad35e020ac444c4e2
           </ul>
         </div>
 
@@ -166,23 +147,33 @@ const Navbar = () => {
             {user && (
               <div
                 className="relative cursor-pointer"
-<<<<<<< HEAD
                 // onMouseEnter={handleMouseEnter}
                 // onMouseLeave={handleMouseLeave}
               >
                 <div className="flex gap-2 mr-24">
                   <div className="dropdown">
                     <button tabIndex={0} className=" m-1  rounded-full ">
-                      <img
+                      {/* <img
                         className="rounded-full w-14 h-14 mr-12 border border-blue-500 "
-                        src={user.photoURL}
-                        alt=""
-                      />
+                        src={user.photoURL || './user1.png'}
+                        alt="abcd"
+                        title={user.displayName} 
+                      /> */}
+                      <div className="avatar">
+                        <div className="w-12 rounded-full">
+                          <img
+                            src={user.photoURL || "./default.svg"}
+                            alt="User's profile picture"
+                            title={user.displayName}
+                            
+                          />
+                        </div>
+                      </div>
                     </button>
 
                     <ul
-                      tabIndex={0}
-                      className="dropdown-content z-[1] menu p-2 shadow  mt-3 rounded-box w-40 "
+                      tabIndex={0} style={{backgroundColor:"white", borderRadius:"7px"}}
+                      className="dropdown-content z-[1] menu p-2 shadow  mt-3  w-40 "
                     >
                       <li>
                         <Link>Profile </Link>
@@ -231,9 +222,9 @@ const Navbar = () => {
                       </li>
                     </ul>
                   </div>
-                  <div>
+                  {/* <div>
                     <p>{user.displayName}</p>
-                  </div>
+                  </div> */}
                 </div>
 
                 {/* {isHovering && (
@@ -241,24 +232,6 @@ const Navbar = () => {
                                     <p className="text-gray-800">{user.displayName}</p>
                                 </div>
                             )} */}
-=======
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-              >
-                <div className="flex gap-2">
-                  <img
-                    className="rounded-full w-32 h-12 mr-12 border border-blue-500 "
-                    src={user.photoURL}
-                    alt=""
-                  />
-                </div>
-
-                {isHovering && (
-                  <div className="absolute transform -translate-x-1/2 bg-white shadow-lg rounded-lg py-2 px-4">
-                    <p className="text-gray-800">{user.displayName}</p>
-                  </div>
-                )}
->>>>>>> d94574d6bd6d8e32706e5efad35e020ac444c4e2
               </div>
             )}
           </div>

@@ -18,13 +18,9 @@ import ProviderAccountDetails from "../Component/ProviderAccountDetails/Provider
 import Login from "../Component/Login/Login";
 import Registration from "../Component/Registration/Registration";
 import ProviderLogin from "../Component/Login/ProviderLogin";
-<<<<<<< HEAD
 import AdminManageuser from "../Component/AdminDashboard/AdminManageuser";
 import Adminmanageprovider from "../Component/AdminDashboard/Adminmanageprovider";
 import AdminVerifyProvider from "../Component/AdminDashboard/AdminVerifyProvider";
-=======
-import Testing4 from "../Testing4";
->>>>>>> d94574d6bd6d8e32706e5efad35e020ac444c4e2
 
 
 export const router = createBrowserRouter([
@@ -44,10 +40,7 @@ export const router = createBrowserRouter([
     path: "testing3",
     element: <Testing3 />,
   },
-  {
-    path: "testing4",
-    element: <Testing4 />,
-  },
+
   {
     path: "/login",
     element: <Login />,
@@ -97,7 +90,6 @@ export const router = createBrowserRouter([
   },
 
   {
-<<<<<<< HEAD
       path : 'dashboard',
       element : <Dashboard></Dashboard>,
       children : [
@@ -129,23 +121,4 @@ export const router = createBrowserRouter([
         }
       ]
   }
-=======
-    path: "dashboard",
-    element: <Dashboard></Dashboard>,
-    children: [
-      {
-        path: "userdashboard",
-        element: <UserDashboard></UserDashboard>,
-      },
-      {
-        path: "admindashboard",
-        element: <AdminDashboard></AdminDashboard>,
-      },
-      {
-        path: "providerdashboard",
-        element: <ProviderDashboard></ProviderDashboard>,
-      },
-    ],
-  },
->>>>>>> d94574d6bd6d8e32706e5efad35e020ac444c4e2
 ]);

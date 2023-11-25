@@ -517,7 +517,7 @@ function Provider_Profile() {
                   </p>
                   <div
                     style={{
-                      maxHeight: "320px",
+                      maxHeight: "580px",
                       width: "340px",
                       borderTop: "4px solid #4C40ED",
                       borderRadius: "0 0 5px 5px",
@@ -529,7 +529,7 @@ function Provider_Profile() {
                     }}
                   >
                     <CommentList userReviews={person.user_reviews} />{" "}
-                    <button
+                    {/* <button
                       className="btn btn-sm w-28"
                       style={{
                         marginTop: "1%",
@@ -539,13 +539,14 @@ function Provider_Profile() {
                       }}
                     >
                       Load more
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </div>
             </div>
           </div>
         ))}
+        <br /><br /><br />
       <Footer />
     </div>
   );

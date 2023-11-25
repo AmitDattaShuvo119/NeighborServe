@@ -3,7 +3,7 @@ import ProfileComponent from "./ProfileComponent";
 import { AuthContext } from "../../Providers/AuthProviders";
 import BarLoader from "react-spinners/BarLoader";
 import { Link } from "react-router-dom";
-import { set } from "react-hook-form";
+import { motion } from "framer-motion";
 
 function PersonList2({ searchString }) {
   const userId = localStorage.getItem("userID");
@@ -17,6 +17,27 @@ function PersonList2({ searchString }) {
   const [index2, setIndex2] = useState(index1 + 5);
   const [page, setPage] = useState(1);
   const [pageLimit, setPageLimit] = useState(0);
+
+  const [loadingRecommendation, setLoadingRecommendation] = useState(false);
+
+  const text2 = " Result generated based on rating, review, experience";
+
+  const containerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.015, // Adjust the stagger duration between characters
+      },
+    },
+  };
+
+  const textVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+    },
+  };
 
   const pageChange = () => {
     setIndex1(index1 + 5);
@@ -43,9 +64,6 @@ function PersonList2({ searchString }) {
     borderColor: "#4C40ED",
   };
 
-  const [loading, setLoading] = useState(true);
-  const [colorIndex, setColorIndex] = useState(0);
-  const predefinedColors = ["#4C40ED", "#0000FF", "#ab20fd"];
   const [dataArray, setDataArray] = useState([]);
   const [initialData, setInitialData] = useState([]);
 
@@ -54,14 +72,6 @@ function PersonList2({ searchString }) {
   const apiUrl = `http://localhost:5000/providers/providers/${userId}/${x}`;
   const apiUrlnew = `http://127.0.0.1:5001/api/v1/hello?id=${userId}&category=${x}`;
   const [recommendationId, setRecommendationId] = useState(null);
-
-  useEffect(() => {
-    const colorInterval = setInterval(() => {
-      setColorIndex((prevIndex) => (prevIndex + 1) % predefinedColors.length);
-    }, 1500);
-
-    return () => clearInterval(colorInterval);
-  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -81,6 +91,7 @@ function PersonList2({ searchString }) {
   }, [apiUrl, isLoggedIn]);
 
   const recommendation = async () => {
+    setLoadingRecommendation(true);
     setRecommendationValue(1);
     try {
       console.log("Hello");
@@ -93,6 +104,8 @@ function PersonList2({ searchString }) {
       console.log(recommendationId); // Move the log here
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoadingRecommendation(false);
     }
   };
 
@@ -121,13 +134,28 @@ function PersonList2({ searchString }) {
     setDataArray(initialData);
   };
 
+  if (loadingRecommendation) {
+    return (
+      <div style={{ marginLeft: "50%", marginTop: "2%" }}>
+        <BarLoader
+          color="#4C40ED"
+          loading={loadingRecommendation}
+          css={override}
+          size={9}
+          aria-label="Loading Spinner"
+          data-testid="loader"
+        />
+      </div>
+    );
+  }
+
   if (!user) {
     return (
       <div style={{ marginLeft: "50%", marginTop: "2%" }}>
         {isLoggedIn ? (
           <BarLoader
-            color={predefinedColors[colorIndex]}
-            loading={loading}
+            color="#4C40ED"
+            loading={!dataArray.length}
             css={override}
             size={9}
             aria-label="Loading Spinner"
@@ -152,27 +180,38 @@ function PersonList2({ searchString }) {
 
   return (
     <section key={refreshKey}>
-      <div
-        className="tooltip tooltip-right"
-        data-tip="This recommendation system provides personalized suggestions to users based on their history and preferences"
-      >
-        <button
-          style={{
-            marginBottom: "10px",
-            marginTop: "10px",
-            color: "white",
-            whiteSpace: "nowrap",
-          }}
-          onClick={recommendation}
-          className="btn btn-primary"
+      {recommendationValue !== 1 && (
+        <div
+          className="tooltip tooltip-right"
+          data-tip="This recommendation system provides personalized suggestions to users based on their history and preferences"
         >
-          Smart Recommendation
-        </button>
-      </div>{" "}
+          <button
+            style={{
+              marginBottom: "10px",
+              marginTop: "10px",
+              color: "white",
+              whiteSpace: "nowrap",
+            }}
+            onClick={recommendation}
+            className="btn btn-primary"
+          >
+            Smart Recommendation
+          </button>
+        </div>
+      )}
       {recommendationValue === 1 && (
-        <p style={{ marginTop: "5px", marginBottom: "5px", fontSize: "18px" }}>
-          Recommended <span style={{ color: "#4C40ED" }}>{x}</span> for you
-        </p>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+          style={{ fontSize: "18px", color: "#676464" }}
+        >
+          {text2.split("").map((char, index) => (
+            <motion.span key={index} variants={textVariants}>
+              {char}
+            </motion.span>
+          ))}
+        </motion.div>
       )}
       {dataArray.slice(index1, index2).map((person, personIndex) => (
         <ProfileComponent {...person} key={person.id} />
@@ -186,9 +225,6 @@ function PersonList2({ searchString }) {
           Show All
         </button>
       )}
-      {/* <button className="btn btn-primary" onClick={pageChange}>
-        asd
-      </button>{" "} */}
       <br />
       {recommendationValue !== 1 && (
         <div

@@ -18,7 +18,7 @@ const Comment = ({ reviewer, reviewerImg, date, review }) => {
           style={{
             display: "flex",
             alignItems: "center",
-            width:"60%",
+            width: "60%",
           }}
         >
           <img
@@ -32,7 +32,7 @@ const Comment = ({ reviewer, reviewerImg, date, review }) => {
               marginLeft: "2%",
               color: "black",
               marginTop: "-1.5%",
-              fontSize:"15px"
+              fontSize: "15px",
             }}
           >
             {reviewer}
@@ -52,7 +52,7 @@ const Comment = ({ reviewer, reviewerImg, date, review }) => {
             color: "#B6B6B9",
             fontSize: "12px",
             // marginLeft: "12.5%",
-            marginRight:"10px"
+            marginRight: "10px",
           }}
         >
           {date}
@@ -72,6 +72,10 @@ const Comment = ({ reviewer, reviewerImg, date, review }) => {
 };
 
 const CommentList = ({ userReviews }) => {
+  if (!userReviews) {
+    return <p style={{textAlign:"center"}}>No reviews yet</p>;
+  }
+
   const [index1, setIndex1] = useState(0);
   const [page, setPage] = useState(1);
   const reviewsPerPage = 6;

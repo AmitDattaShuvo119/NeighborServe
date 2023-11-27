@@ -213,9 +213,13 @@ function PersonList2({ searchString }) {
           ))}
         </motion.div>
       )}
-      {dataArray.slice(index1, index2).map((person, personIndex) => (
-        <ProfileComponent {...person} key={person.id} />
-      ))}
+      {dataArray
+        .filter((person) => userId !== person._id)
+        .slice(index1, index2)
+        .map((person, personIndex) => (
+          <ProfileComponent {...person} key={person.id} />
+        ))}
+
       {recommendationValue === 1 && (
         <button
           style={{ marginBottom: "10px", marginTop: "10px", color: "white" }}

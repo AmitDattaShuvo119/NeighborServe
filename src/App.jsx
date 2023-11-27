@@ -1,7 +1,7 @@
 import React from 'react';
-import Login from './Login/Login';
-import Registration from './Registration';
-import Service from './Service';
+// import Login from './Login/Login';
+// import Registration from './Registration';
+// import Service from './Service';
 import './App.css'
 import Category from './Component/Category/Category'
 import CustomerSupport from './Component/CustomerSupport/CustomerSupport'

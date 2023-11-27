@@ -16,6 +16,7 @@ function Provider_Profile() {
   const [address, setAddress] = useState("");
   const [availableSlots, setAvailableSlots] = useState([]); // Replace with your available slots
   const [dataArray, setDataArray] = useState([]);
+  const [dataArray2, setDataArray2] = useState([]);
   const [dayStatus, setdayStatus] = useState("Today");
   const { searchString } = useParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -32,6 +33,20 @@ function Provider_Profile() {
       .then((response) => response.json())
       .then((data) => {
         setDataArray(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, []);
+
+
+  const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
+
+  useEffect(() => {
+    fetch(apiUrl2)
+      .then((response) => response.json())
+      .then((data) => {
+        setDataArray2(data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -109,7 +124,7 @@ function Provider_Profile() {
       pro_name: dataArray[0].user_fullname,
       pro_category: dataArray[0].user_category,
       pro_img: dataArray[0].user_img,
-      user_fullname: "Abir",
+      user_fullname: dataArray2[0].user_fullname,
       user_id: searchString2,
       dateAdded: formatDateToDDMMYYYY(new Date()),
       appointmentTime: selectedSlot,
@@ -118,13 +133,14 @@ function Provider_Profile() {
       ),
       homeAddress: homeAddress,
       note: note,
+      status: "Pending",
     };
     // Make a POST request to the server to save the new appointment
     axios
       .post(apiUrl2, newAppointment)
       .then((response) => {
-        navigate(`/view_appointment/${searchString2}`);
-
+        // navigate(`/view_appointment/${searchString2}`);
+        alert("Service requested successfully!");
         console.log(response.data);
       })
       .catch((error) => {
@@ -240,23 +256,30 @@ function Provider_Profile() {
                           className="pp-container11"
                         />
                         &nbsp;
-                        <p className="pp-container12" style={{ marginTop:"0.8%" }}>
+                        <p
+                          className="pp-container12"
+                          style={{ marginTop: "0.8%" }}
+                        >
                           {person.user_verficationStatus} Verified
                         </p>
                       </div>
-                     
-                     
-                      <div className="pp-container4" style={{marginTop:"-0.5%"}}>
+
+                      <div
+                        className="pp-container4"
+                        style={{ marginTop: "-0.5%" }}
+                      >
                         <img
                           style={{ height: "25px", width: "25px" }}
                           src="./Star.svg"
                           alt=""
                         />
                         &nbsp;
-                        <p className="pp-container12" style={{ marginTop:"1%" }}>
+                        <p
+                          className="pp-container12"
+                          style={{ marginTop: "1%" }}
+                        >
                           {person.user_rating} <span> star rated</span>
                         </p>
-                     
                       </div>
                     </div>
                     <div
@@ -546,7 +569,9 @@ function Provider_Profile() {
             </div>
           </div>
         ))}
-        <br /><br /><br />
+      <br />
+      <br />
+      <br />
       <Footer />
     </div>
   );

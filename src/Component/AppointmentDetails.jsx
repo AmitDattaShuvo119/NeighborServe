@@ -2,15 +2,82 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar/Navbar";
 import "../styles/AppointmentDetails.css";
 import { Link, useParams } from "react-router-dom";
-// import { ap } from "./ap";
+import useUser from "../hook/useUser";
+import useProvider from "../hook/useProvider";
+import axios from "axios";
+import Footer from "./Footer/Footer";
+
+const RatingModal = ({ onClose, onSubmit }) => {
+  console.log("Rendering RatingModal with props:", { onClose, onSubmit });
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+
+  const handleRatingChange = (event) => {
+    setRating(event.target.value);
+  };
+
+  const handleReviewChange = (event) => {
+    setReview(event.target.value);
+  };
+
+  const handleSubmit = () => {
+    // Perform any actions with rating and review
+    onSubmit({ rating, review });
+
+    // Close the modal
+    // onClose();
+  };
+
+  return (
+    <div className="modal">
+      <h1>Hello world</h1>
+      <div className="modal-content">
+        <span className="close" onClick={onClose}>
+          &times;
+        </span>
+        <h2>Rate the Pro</h2>
+        <label htmlFor="rating">Rating:</label>
+        <input
+          type="number"
+          id="rating"
+          value={rating}
+          onChange={handleRatingChange}
+        />
+        <label htmlFor="review">Review:</label>
+        <textarea id="review" value={review} onChange={handleReviewChange} />
+        <button onClick={handleSubmit}>Submit</button>
+      </div>
+    </div>
+  );
+};
+
 const AppointmentDetails = () => {
+  const [isUser] = useUser();
+  const [isProvider] = useProvider();
   const { searchString } = useParams();
   const { appointmentId } = useParams();
   const [appointment, setAppointment] = useState(null);
   const [isAppointmentCanceled, setIsAppointmentCanceled] = useState(false);
+  const [isJobFinished, setIsJobFinished] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [review, setReview] = useState("");
+
+  const handleSubmitReview = () => {
+    // Perform any actions with rating and review
+    console.log("Submitted Rating:", rating);
+    console.log("Submitted Review:", review);
+
+    // You can also make an API request to submit the rating and review if needed
+
+    // Close the modal
+    setModalOpen(false);
+  };
 
   const apiUrl = `http://localhost:5000/providers/appointment_details/${searchString}/${appointmentId}`;
+
   useEffect(() => {
+    // Fetch appointment details
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
@@ -19,7 +86,28 @@ const AppointmentDetails = () => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [appointmentId]);
+  }, [appointmentId, apiUrl]);
+
+  const fetchAppointmentDetails = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setAppointment(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch appointment details initially
+    fetchAppointmentDetails();
+
+    // Set up a periodic fetch every 5 seconds (adjust as needed)
+    const intervalId = setInterval(fetchAppointmentDetails, 2000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [appointmentId, apiUrl]);
 
   const cancelAppointment = () => {
     // Make an API request to cancel the appointment
@@ -44,6 +132,24 @@ const AppointmentDetails = () => {
       .catch((error) => {
         console.error("Error canceling appointment:", error);
       });
+  };
+
+  const updateStatus = async (appointmentId, user_id, pro_id, newStatus) => {
+    try {
+      const apiUrl = `http://localhost:5000/providers/updateAppointment/${pro_id}/${user_id}/${appointmentId}`;
+      const response = await axios.patch(apiUrl, { status: newStatus });
+
+      // Update the local state with the new status
+      setAppointment((prevAppointment) => ({
+        ...prevAppointment,
+        status: newStatus,
+      }));
+
+      setIsJobFinished(true);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error updating appointment status:", error);
+    }
   };
 
   return (
@@ -193,6 +299,27 @@ const AppointmentDetails = () => {
               fontWeight: "bold",
             }}
           >
+            Status:
+          </p>
+          <p
+            style={{
+              fontSize: "15px",
+              marginLeft: "2%",
+              marginRight: "2%",
+              textAlign: "justify",
+            }}
+          >
+            {appointment.status}
+          </p>
+          <p
+            style={{
+              fontSize: "16px",
+              marginLeft: "2%",
+              marginTop: "1%",
+              color: "#4C40ED",
+              fontWeight: "bold",
+            }}
+          >
             Note:
           </p>
           <p
@@ -207,22 +334,101 @@ const AppointmentDetails = () => {
           </p>
 
           <div className="ad-container2">
-            <button className="btn btn-primary">Reschedule Appointment</button>
-
-            <Link to={`/view_appointment/${searchString}`}>
+            {/* <button className="btn btn-primary">Reschedule Appointment</button> */}
+            {isProvider && appointment.status !== "Completed" && (
               <button
-                className="btn btn-outline btn-primary"
-                style={{ marginLeft: "2%" }}
-                onClick={cancelAppointment}
+                className="btn btn-primary text-white"
+                onClick={() =>
+                  updateStatus(
+                    appointment.appointmentId,
+                    appointment.user_id,
+                    appointment.pro_id,
+                    "Completed"
+                  )
+                }
               >
-                Cancel Appointment
+                Finish Job
               </button>
-            </Link>
+            )}
+            {isUser && appointment.status === "Completed" && !modalOpen && (
+              <button
+                className="btn btn-primary text-white"
+                onClick={() => {
+                  console.log("Rate the Pro button clicked");
+                  setModalOpen(true);
+                }}
+              >
+                Rate the Pro
+              </button>
+            )}
+            {isUser && appointment.status === "Completed" && modalOpen && (
+              <div style={{ border: "1px solid black" }}>
+                <div className="rating">
+                  <input
+                    type="radio"
+                    name="rating-1"
+                    className="mask mask-star"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-1"
+                    className="mask mask-star"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-1"
+                    className="mask mask-star"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-1"
+                    className="mask mask-star"
+                  />
+                  <input
+                    type="radio"
+                    name="rating-1"
+                    className="mask mask-star"
+                  />
+                </div>
+                <label htmlFor="rating">Rating:</label>
+                <input
+                  type="number"
+                  id="rating"
+                  value={rating}
+                  onChange={(e) => setRating(e.target.value)}
+                />
+                <label htmlFor="review">Review:</label>
+                <textarea
+                  id="review"
+                  value={review}
+                  onChange={(e) => setReview(e.target.value)}
+                />
+                <button onClick={handleSubmitReview}>Submit Review</button>
+              </div>
+            )}
+            {!isJobFinished && (
+              <Link to={`/view_appointment/${searchString}`}>
+                <button
+                  className="btn btn-outline btn-primary"
+                  onClick={cancelAppointment}
+                >
+                  Cancel Appointment
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       ) : (
         <p>Loading appointment details...</p>
       )}
+      <br />
+      <br />
+      <br /> <br />
+      <br />
+      <br /> <br />
+      <br />
+      <br /> <br />
+      {/* <Footer /> */}
     </div>
   );
 };

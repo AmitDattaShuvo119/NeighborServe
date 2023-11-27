@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from "react"
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom"
-import "./ProviderLogin.css"
-import Navbar from "../Navbar/Navbar"
-import Footer from "../Footer/Footer"
-import Swal from "sweetalert2"
-import { useForm } from "react-hook-form"
-import { AuthContext } from "../../Providers/AuthProviders"
+import React, { useState, useEffect, useContext } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import "./ProviderLogin.css";
+import Navbar from "../Navbar/Navbar";
+import Footer from "../Footer/Footer";
+import Swal from "sweetalert2";
+import { useForm } from "react-hook-form";
+import { AuthContext } from "../../Providers/AuthProviders";
 const ProviderLogin = () => {
   const {
     register,
@@ -14,18 +14,18 @@ const ProviderLogin = () => {
     getValues,
     formState: { errors },
     watch,
-  } = useForm()
+  } = useForm();
 
-  const { createUser, updateUserProfile } = useContext(AuthContext)
-  const location = useLocation()
+  const { createUser, updateUserProfile } = useContext(AuthContext);
+  const location = useLocation();
 
-  const from = location.state?.form?.pathname || "/"
-  const navigate = useNavigate()
+  const from = location.state?.form?.pathname || "/";
+  const navigate = useNavigate();
 
-  const handlesignup = data => {
-    createUser(data.email, data.password).then(result => {
-      const loggedUser = result.user
-      console.log(loggedUser)
+  const handlesignup = (data) => {
+    createUser(data.email, data.password).then((result) => {
+      const loggedUser = result.user;
+      console.log(loggedUser);
 
       updateUserProfile(data.name, data.photoURL)
         .then(() => {
@@ -41,19 +41,19 @@ const ProviderLogin = () => {
             user_pass: data.password,
             user_dob: "",
             user_gender: "",
-            user_type: "provider",
+            user_type: "Service Provider",
             user_category: data.category,
-            user_status: "regular",
+            user_status: "Regular",
             user_location: data.area,
             user_lat: "",
             user_lon: "",
             user_phone: data.phone,
             user_regYear: currentDate.toLocaleDateString("en-US"),
-            user_hireCount: "",
-            user_verficationStatus: "",
+            user_hireCount: 0,
+            user_verficationStatus: "0%",
             user_serviceDetails: "",
-            user_respondTime: "",
-          }
+            user_respondTime: 60,
+          };
           fetch("http://localhost:5000/users/providersignup", {
             method: "POST",
             headers: {
@@ -61,27 +61,27 @@ const ProviderLogin = () => {
             },
             body: JSON.stringify(saveUser),
           })
-            .then(res => res.json())
-            .then(data => {
+            .then((res) => res.json())
+            .then((data) => {
               if (data.insertedId) {
                 const userId = data.insertedId;
                 localStorage.setItem("userID", userId);
-                
-                reset()
+
+                reset();
                 Swal.fire({
                   position: "middle",
                   icon: "success",
                   title: "Provider created successfully.",
                   showConfirmButton: false,
                   timer: 1500,
-                })
-                navigate(from, { replace: true })
+                });
+                navigate(from, { replace: true });
               }
-            })
+            });
         })
-        .catch(error => console.log(error))
-    })
-  }
+        .catch((error) => console.log(error));
+    });
+  };
 
   return (
     <>
@@ -135,14 +135,14 @@ const ProviderLogin = () => {
                     </div>
                     <select
                       {...register("category", {
-                        validate: value => value !== "0",
+                        validate: (value) => value !== "0",
                       })}
                       className="service-reg-field"
                     >
                       <option value="">Choose option</option>
-                      <option value="electrician">Electrician</option>
-                      <option value="plumber">Plumber</option>
-                      <option value="handyman">Handyman</option>
+                      <option value="Electrician">Electrician</option>
+                      <option value="Plumber">Plumber</option>
+                      <option value="Handyman">Handyman</option>
                     </select>
                   </div>
 
@@ -162,7 +162,7 @@ const ProviderLogin = () => {
                     <div className="service-reg-label">Area</div>
                     <select
                       {...register("area", {
-                        validate: value => value !== "0",
+                        validate: (value) => value !== "0",
                       })}
                       className="service-reg-field"
                     >
@@ -264,7 +264,7 @@ const ProviderLogin = () => {
       </div>
       <Footer></Footer>
     </>
-  )
-}
+  );
+};
 
-export default ProviderLogin
+export default ProviderLogin;

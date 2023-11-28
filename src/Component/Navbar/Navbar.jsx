@@ -16,10 +16,34 @@ const Navbar = () => {
   const [isProvider] = useProvider();
   const [isUser] = useUser();
   const userId = localStorage.getItem("userID");
+  const [dataArray, setDataArray] = useState([]);
   console.log("Admin", isAdmin);
   console.log("provider", isProvider);
   console.log("user", isUser);
+  // console.log("email here: "+user.email);
   // console.log(user);
+  const [user_img, setUser_img] = useState(null);
+  const apiUrl = user ? `http://localhost:5000/providers/getId/${user.email}` : null;
+
+  useEffect(() => {
+    if (user) {
+      const timerId = setTimeout(() => {
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            setDataArray(data);
+            setUser_img(data.map((user1) => user1.user_img)[0]);
+            console.log("img: " + user_img);
+          })
+          .catch((error) => {
+            console.error("Error fetching data:", error);
+          });
+      }, 500); // Adjust the delay time as needed
+  
+      // Clear the timeout if the component unmounts or user changes
+      return () => clearTimeout(timerId);
+    }
+  }, [user, apiUrl]);
 
   const handleLogOut = () => {
     logout()
@@ -161,7 +185,7 @@ const Navbar = () => {
                       <div className="avatar">
                         <div className="w-12 rounded-full">
                           <img
-                            src={user.photoURL || "./default.svg"}
+                            src={user.photoURL || user_img || "./default.svg"  }
                             alt="User's profile picture"
                             title={user.displayName}
                           />
@@ -183,9 +207,9 @@ const Navbar = () => {
                         </Link>
                       </li>
                       <li>
-                      {isProvider &&(<Link to={`/view_request/${userId}`}>
-                          Requests
-                        </Link>)}  
+                        {isProvider && (
+                          <Link to={`/view_request/${userId}`}>Requests</Link>
+                        )}
                       </li>
                       <li>
                         {isAdmin && (

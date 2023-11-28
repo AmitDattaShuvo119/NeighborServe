@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Navbar from "./Navbar/Navbar";
 import "../styles/AppointmentDetails.css";
 import { Link, useParams } from "react-router-dom";
@@ -6,50 +6,7 @@ import useUser from "../hook/useUser";
 import useProvider from "../hook/useProvider";
 import axios from "axios";
 import Footer from "./Footer/Footer";
-
-const RatingModal = ({ onClose, onSubmit }) => {
-  console.log("Rendering RatingModal with props:", { onClose, onSubmit });
-  const [rating, setRating] = useState(0);
-  const [review, setReview] = useState("");
-
-  const handleRatingChange = (event) => {
-    setRating(event.target.value);
-  };
-
-  const handleReviewChange = (event) => {
-    setReview(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    // Perform any actions with rating and review
-    onSubmit({ rating, review });
-
-    // Close the modal
-    // onClose();
-  };
-
-  return (
-    <div className="modal">
-      <h1>Hello world</h1>
-      <div className="modal-content">
-        <span className="close" onClick={onClose}>
-          &times;
-        </span>
-        <h2>Rate the Pro</h2>
-        <label htmlFor="rating">Rating:</label>
-        <input
-          type="number"
-          id="rating"
-          value={rating}
-          onChange={handleRatingChange}
-        />
-        <label htmlFor="review">Review:</label>
-        <textarea id="review" value={review} onChange={handleReviewChange} />
-        <button onClick={handleSubmit}>Submit</button>
-      </div>
-    </div>
-  );
-};
+import { AuthContext } from "../Providers/AuthProviders";
 
 const AppointmentDetails = () => {
   const [isUser] = useUser();
@@ -60,18 +17,70 @@ const AppointmentDetails = () => {
   const [isAppointmentCanceled, setIsAppointmentCanceled] = useState(false);
   const [isJobFinished, setIsJobFinished] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState(5);
   const [review, setReview] = useState("");
+  const { user, logout } = useContext(AuthContext);
+  const userId = localStorage.getItem("userID");
+  const userImg = localStorage.getItem("userImg");
+  const [buttonText, setButtonText] = useState("Submit now");
 
-  const handleSubmitReview = () => {
-    // Perform any actions with rating and review
-    console.log("Submitted Rating:", rating);
-    console.log("Submitted Review:", review);
+  function formatDateToDDMMYYYY(date) {
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return date.toLocaleDateString(undefined, options);
+  }
 
-    // You can also make an API request to submit the rating and review if needed
+  const handleSubmitReview = (pro_id, appointmentId) => {
+    if (!review.trim()) {
+      // Comment is empty, you can prevent the submission or show an error message
+      alert("Please add a comment before submitting.");
+      return;
+    }
+
+    setButtonText("Submitted");
+    const apiUrl = `http://localhost:5000/providers/post_review/${pro_id}`;
+
+    const newReview = {
+      reviewId: userId,
+      reviewerId: userId,
+      reviewerName: user.displayName,
+      reviewerImg: userImg,
+      review: review,
+      date: formatDateToDDMMYYYY(new Date()),
+    };
+    axios
+      .post(apiUrl, newReview)
+      .then((response) => {
+        // navigate(`/view_appointment/${searchString2}`);
+        alert("Feedback submitted successfully!");
+        console.log(response.data);
+      })
+      .catch((error) => {
+        // Handle error
+        console.error(error);
+      });
+
+    const apiUrl1 = `http://localhost:5000/providers/update_pro/${pro_id}`;
+    const data1 = {
+      user_rating: rating,
+    };
+
+    axios
+      .patch(apiUrl1, data1)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    updateStatus(appointmentId, userId, pro_id, "Done");
 
     // Close the modal
-    setModalOpen(false);
+    console.log("rating: ", rating);
+    console.log("Submitted Review:", newReview);
+    setTimeout(() => {
+      setModalOpen(false);
+    }, 3000);
   };
 
   const apiUrl = `http://localhost:5000/providers/appointment_details/${searchString}/${appointmentId}`;
@@ -335,7 +344,7 @@ const AppointmentDetails = () => {
 
           <div className="ad-container2">
             {/* <button className="btn btn-primary">Reschedule Appointment</button> */}
-            {isProvider && appointment.status !== "Completed" && (
+            {isProvider && appointment.status === "Accepted" && (
               <button
                 className="btn btn-primary text-white"
                 onClick={() =>
@@ -361,52 +370,109 @@ const AppointmentDetails = () => {
                 Rate the Pro
               </button>
             )}
-            {isUser && appointment.status === "Completed" && modalOpen && (
-              <div style={{ border: "1px solid black" }}>
-                <div className="rating">
-                  <input
-                    type="radio"
-                    name="rating-1"
-                    className="mask mask-star"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-1"
-                    className="mask mask-star"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-1"
-                    className="mask mask-star"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-1"
-                    className="mask mask-star"
-                  />
-                  <input
-                    type="radio"
-                    name="rating-1"
-                    className="mask mask-star"
-                  />
+            <div
+              className={
+                isUser && appointment.status === "Completed" && modalOpen
+                  ? "ad-modal-container"
+                  : "hidden"
+              }
+            >
+              <div className="ad-modal-content">
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <img src="./feedback.svg" alt="" />
+                  <p
+                    style={{
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Feedback
+                  </p>
                 </div>
-                <label htmlFor="rating">Rating:</label>
-                <input
-                  type="number"
-                  id="rating"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                />
-                <label htmlFor="review">Review:</label>
-                <textarea
-                  id="review"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                />
-                <button onClick={handleSubmitReview}>Submit Review</button>
+                <hr style={{ marginTop: "10px" }} />
+                <br />
+                <br />
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: "22px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Give your feedback
+                </p>
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontSize: "14px",
+                    color: "#B0B2B7",
+                  }}
+                >
+                  Share your thoughts and help others make informed decisions!
+                  Let us know what you liked or any areas where there's room for
+                  improvement. Your feedback is valuable to our community
+                </p>
+                <br />
+                <div
+                  className="rating"
+                  style={{
+                    justifyContent: "center",
+                    gap: "7px",
+                  }}
+                >
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <input
+                      key={value}
+                      type="radio"
+                      name="rating-1"
+                      className="mask mask-star-2 bg-blue-purple w-8 h-8"
+                      value={value}
+                      checked={rating === value}
+                      onChange={() => setRating(value)}
+                    />
+                  ))}
+                </div>
+                <br />
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <textarea
+                    style={{ width: "100%" }}
+                    id="review"
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    className="textarea textarea-primary"
+                    placeholder="Add a comment"
+                    required
+                  ></textarea>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleSubmitReview(
+                        appointment.pro_id,
+                        appointment.appointmentId,
+                        appointment.user_id
+                      )
+                    }
+                    className="btn btn-wide ad-modal-btn"
+                    disabled={buttonText === "Submitted"} // Disable the button when it's in the "Submitted" state
+                  >
+                    {buttonText}{" "}
+                    {buttonText === "Submitted" && (
+                      <img src="./submitted.svg" alt="" />
+                    )}
+                  </button>
+                </div>
+
+                <br />
               </div>
-            )}
-            {!isJobFinished && (
+            </div>
+            {!isJobFinished && (appointment.status === "Pending" || appointment.status === "Accepted") && (
               <Link to={`/view_appointment/${searchString}`}>
                 <button
                   className="btn btn-outline btn-primary"

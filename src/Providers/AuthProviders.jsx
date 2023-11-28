@@ -62,8 +62,10 @@ const AuthProviders = ({ children }) => {
           );
           const data = await response.json();
           if (data.length > 0) {
-            const userId = data[0]._id; // Assuming you have a single userId associated with the email
+            const userId = data[0]._id;
+            const userImg = data[0].user_img // Assuming you have a single userId associated with the email
             localStorage.setItem("userID", userId);
+            localStorage.setItem("userImg", userImg);
           }
         } catch (error) {
           console.error("Error fetching userId:", error);
@@ -72,7 +74,8 @@ const AuthProviders = ({ children }) => {
         // Clear user information from local storage if the user is not logged in
         localStorage.removeItem("userUid");
         localStorage.removeItem("userEmail");
-        localStorage.removeItem("userID"); // Remove userId when the user logs out
+        localStorage.removeItem("userID");
+        localStorage.removeItem("userImg"); // Remove userId when the user logs out
       }
 
       return () => {
@@ -84,7 +87,8 @@ const AuthProviders = ({ children }) => {
   // Retrieve user information from local storage
   const storedUserUid = localStorage.getItem("userUid");
   const storedUserEmail = localStorage.getItem("userEmail");
-  const storedUserId = localStorage.getItem("userID"); // Retrieve userId
+  const storedUserId = localStorage.getItem("userID");
+  const storedUserImg = localStorage.getItem("userImg");  // Retrieve userId
 
   const authInfo = {
     user,
@@ -96,7 +100,8 @@ const AuthProviders = ({ children }) => {
     googleSignIn,
     storedUserUid,
     storedUserEmail,
-    storedUserId, // Include storedUserId in the context
+    storedUserId,
+    storedUserImg, // Include storedUserId in the context
   };
 
   return (

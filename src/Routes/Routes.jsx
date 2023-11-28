@@ -21,6 +21,7 @@ import ProviderLogin from "../Component/Login/ProviderLogin";
 import AdminManageuser from "../Component/AdminDashboard/AdminManageuser";
 import Adminmanageprovider from "../Component/AdminDashboard/Adminmanageprovider";
 import AdminVerifyProvider from "../Component/AdminDashboard/AdminVerifyProvider";
+import ReqAppointment from "../Component/ReqAppointment";
 
 
 export const router = createBrowserRouter([
@@ -67,7 +68,10 @@ export const router = createBrowserRouter([
     path: "appointment_details/:searchString/:appointmentId", // Include searchString and appointmentId
     element: <AppointmentDetails />,
   },
-
+  {
+    path: "view_request/:searchString",
+    element: <ReqAppointment />,
+  },
   {
     path: "/reg",
     element: <Registration />,

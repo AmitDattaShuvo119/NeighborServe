@@ -12,7 +12,7 @@ const LocationBar = () => {
 
   const userEmail = localStorage.getItem("userEmail");
   const userId = localStorage.getItem("userID");
-  console.log("id:"+userId);
+  // console.log("id:"+userId);
 
   const handleFindProsClick = async () => {
     if (!isLocationFetched) {

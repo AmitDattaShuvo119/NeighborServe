@@ -45,6 +45,59 @@ const ReqAppointment = () => {
     }
   };
 
+  const cancelAppointment = (appointmentId) => {
+    // Make an API request to cancel the appointment
+    fetch(
+      `http://localhost:5000/providers/cancel_appointment/${searchString}/${appointmentId}`,
+      {
+        method: "DELETE",
+      }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle the response, you can display a message to the user
+        if (data.message === "Document deleted successfully") {
+          setIsAppointmentCanceled(true);
+          setTimeout(() => {
+            setIsAppointmentCanceled(false);
+          }, 2000);
+        } else {
+          alert("Failed to cancel the appointment.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error canceling appointment:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchData(); // Fetch data initially
+
+    const intervalId = setInterval(fetchData, 500); // Fetch data every 5 seconds (adjust as needed)
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
+  }, [apiUrl]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      if (Array.isArray(data.appointments)) {
+        setDataArray(data.appointments);
+      } else {
+        console.error("Appointments data is not an array:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    // Your logic for handling changes in dataArray
+    console.log("dataArray has changed:", dataArray);
+  }, [dataArray]);
+
   return (
     <div>
       <Navbar />
@@ -92,9 +145,7 @@ const ReqAppointment = () => {
                   .map((appointment, index) => (
                     <tr key={appointment.appointmentId}>
                       <td>{index + 1}</td>
-                      <td>
-                        {appointment.user_fullname} ({appointment.pro_category})
-                      </td>
+                      <td>{appointment.user_fullname}</td>
                       <td>{appointment.dateAdded}</td>
                       <td>{appointment.status}</td>
                       <td>
@@ -133,6 +184,9 @@ const ReqAppointment = () => {
                         <button
                           className="btn btn-primary btn-sm ml-2"
                           style={{ background: "none", color: "#4C40ED" }}
+                          onClick={() =>
+                            cancelAppointment(appointment.appointmentId)
+                          }
                           onMouseEnter={(e) => {
                             e.target.style.backgroundColor = "#4C40ED";
                             e.target.style.color = "white";
@@ -150,7 +204,7 @@ const ReqAppointment = () => {
               </tbody>
             </table>
           ) : (
-            <p>No appointments found.</p>
+            <p>No appointment requests found.</p>
           )}
         </div>
       </div>

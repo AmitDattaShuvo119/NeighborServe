@@ -7,6 +7,7 @@ import useProvider from "../hook/useProvider";
 import axios from "axios";
 import Footer from "./Footer/Footer";
 import { AuthContext } from "../Providers/AuthProviders";
+import Countdown from "react-countdown";
 
 const AppointmentDetails = () => {
   const [isUser] = useUser();
@@ -23,6 +24,7 @@ const AppointmentDetails = () => {
   const userId = localStorage.getItem("userID");
   const userImg = localStorage.getItem("userImg");
   const [buttonText, setButtonText] = useState("Submit now");
+  const [distanceData, setDistanceData] = useState("");
 
   function formatDateToDDMMYYYY(date) {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
@@ -73,35 +75,37 @@ const AppointmentDetails = () => {
         console.error(error);
       });
 
-    updateStatus(appointmentId, userId, pro_id, "Done");
-
     // Close the modal
     console.log("rating: ", rating);
     console.log("Submitted Review:", newReview);
     setTimeout(() => {
+      updateStatus(appointmentId, userId, pro_id, "Done");
       setModalOpen(false);
     }, 3000);
   };
 
-  const apiUrl = `http://localhost:5000/providers/appointment_details/${searchString}/${appointmentId}`;
-
-  useEffect(() => {
-    // Fetch appointment details
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        setAppointment(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [appointmentId, apiUrl]);
-
   const fetchAppointmentDetails = async () => {
     try {
+      console.log(userId);
+      const apiUrl = `http://localhost:5000/providers/appointment_details/${searchString}/${appointmentId}`;
       const response = await fetch(apiUrl);
       const data = await response.json();
       setAppointment(data);
+      const x = data.pro_id;
+      const y = data.user_id;
+      // console.log("id " + x);
+      // console.log("id " + y);
+
+      // Fetch distance data only if pro_id is available
+      if (x) {
+        console.log("Nihad");
+        // console.log("Hello");
+        const distanceApiUrl = `http://localhost:5000/providers/getDistance/${y}/${x}`;
+        const response2 = await fetch(distanceApiUrl);
+        const data2 = await response2.json();
+        setDistanceData(data2);
+        console.log(data2);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -112,11 +116,11 @@ const AppointmentDetails = () => {
     fetchAppointmentDetails();
 
     // Set up a periodic fetch every 5 seconds (adjust as needed)
-    const intervalId = setInterval(fetchAppointmentDetails, 2000);
+    const intervalId = setInterval(fetchAppointmentDetails, 500);
 
     // Clean up the interval on component unmount
     return () => clearInterval(intervalId);
-  }, [appointmentId, apiUrl]);
+  }, [appointmentId, searchString, userId]);
 
   const cancelAppointment = () => {
     // Make an API request to cancel the appointment
@@ -161,6 +165,32 @@ const AppointmentDetails = () => {
     }
   };
 
+  // const CountdownRenderer = ({ hours, minutes, seconds, completed }) => {
+  //   if (completed) {
+  //     return <span>Appointment has ended!</span>;
+  //   } else {
+  //     return (
+  //       <span>
+  //         {hours}:{minutes}:{seconds}
+  //       </span>
+  //     );
+  //   }
+  // };
+  const [countdownTime, setCountdownTime] = useState("");
+
+  useEffect(() => {
+    // Fetch appointment details initially
+    fetchAppointmentDetails();
+
+    // Set up a periodic fetch every 5 seconds (adjust as needed)
+    const intervalId = setInterval(fetchAppointmentDetails, 5000);
+
+    // Clean up the interval on component unmount
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [appointmentId, searchString, userId]); // Log countdownTime changes
+
   return (
     <div>
       <Navbar />{" "}
@@ -201,152 +231,198 @@ const AppointmentDetails = () => {
               <li>Appoinment {appointment.appointmentId}</li>
             </ul>
           </div>
-
-          <p style={{ fontSize: "22px", marginLeft: "1%", marginTop: "1%" }}>
-            Scheduled Appointment with with{" "}
-            <Link to={`/provider_profile/${appointment.pro_id}`}>
-              {" "}
-              <span style={{ fontWeight: "bold", color: "#4C40ED" }}>
-                {appointment.pro_name}
-              </span>
-            </Link>
-          </p>
           <br />
-          <div style={{ display: "flex" }}>
-            <Link to={`/provider_profile/${appointment.pro_id}`}>
-              {" "}
-              <div className="avatar" style={{ marginLeft: "2%" }}>
-                <div className="w-32 rounded">
-                  <img
-                    src={appointment.pro_img}
-                    alt="Tailwind-CSS-Avatar-component"
-                  />
-                </div>
-              </div>{" "}
-            </Link>
+          <div className="ad-main-container">
             <div
               style={{
                 display: "flex",
-                flexDirection: "column",
-                width: "250px",
+                marginLeft: "20px",
               }}
             >
-              <p
+              <div
                 style={{
-                  fontSize: "20px",
-                  marginLeft: "2%",
-                  fontWeight: "bold",
+                  marginTop: "20px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "10px",
+                  width: "615px",
                 }}
               >
-                <Link to={`/provider_profile/${appointment.pro_id}`}>
+                <div>
                   {" "}
-                  {appointment.pro_name}
-                </Link>
-              </p>
-              <p style={{ marginLeft: "2%", color: "#4C40ED" }}>
-                {appointment.pro_category}
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <img src="./appointment.svg" alt="" />
+                    <p style={{ marginTop: "4px", color: "#6B6E81" }}>
+                      {appointment.appointmentId}
+                    </p>
+                  </div>{" "}
+                  {appointment.status === "Accepted" && (   <div
+                    style={{
+                      marginTop: "3px",
+                      display: "flex",
+                      fontSize: "13px",
+                      color: "#6B6E81",
+                    }}
+                  >
+                    {" "}
+                    Appointment in &nbsp;
+                    <span
+                      style={{
+                        color: "#4C40ED",
+                        fontSize: "15px",
+                        marginTop: "-1px",
+                      }}
+                    >
+                      {" "}
+                      <Countdown
+                        date={`${appointment.appointmentDate} ${appointment.appointmentTime}`}
+                        renderer={({ hours, minutes, seconds, completed }) => {
+                          if (completed) {
+                            return <span>Appointment has ended!</span>;
+                          } else {
+                            const timeLeft = `${hours}h:${minutes}m:${seconds}s`;
+                            setCountdownTime(timeLeft);
+                            return <span>{timeLeft}</span>;
+                          }
+                        }}
+                      />
+                    </span>{" "}
+                  </div>)}
+                </div>
+
+                <div
+                  style={{
+                    height: "27px",
+                    width: "90px",
+                    backgroundColor:
+                      appointment.status === "Pending"
+                        ? "#ff7e26"
+                        : appointment.status === "Accepted"
+                        ? "#a4fba6"
+                        : appointment.status === "Completed"
+                        ? "#0f9200"
+                        : appointment.status === "Done"
+                        ? "#2081f9"
+                        : "#000000", // Default color if none of the statuses match
+                    textAlign: "center",
+                    color: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "25px",
+                  }}
+                >
+                  {appointment.status}
+                </div>
+              </div>
+            </div>
+            <hr
+              style={{
+                marginTop: "10px",
+                width: "calc(100% - 20px)",
+                marginLeft: "10px",
+              }}
+            />
+
+            <div
+              style={{ marginLeft: "35px", marginTop: "10px", display: "flex" }}
+            >
+              <Link to={`/provider_profile/${appointment.pro_id}`}>
+                {" "}
+                <div className="avatar">
+                  <div className="w-20 rounded">
+                    <img
+                      src={isProvider ? distanceData.uimg : distanceData.pimg}
+                      alt="Tailwind-CSS-Avatar-component"
+                    />
+                  </div>
+                </div>{" "}
+              </Link>
+              <div>
+                <ul>
+                  <li>
+                    <Link to={`/provider_profile/${appointment.pro_id}`}>
+                      {" "}
+                      <p
+                        style={{
+                          marginLeft: "10px",
+                          color: "black",
+                          fontSize: "22px",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        {isProvider
+                          ? appointment.user_fullname
+                          : appointment.pro_name}{" "}
+                        {!isProvider && (
+                          <span style={{ marginTop: "-1.5x" }}>
+                            <div className="badge badge-primary badge-outline">
+                              {appointment.pro_category}
+                            </div>
+                          </span>
+                        )}
+                      </p>
+                    </Link>
+                  </li>
+                  <li style={{ display: "flex", marginLeft: "5px" }}>
+                    <img src="./gps.svg" alt="" />
+                    <p
+                      style={{
+                        marginLeft: "5px",
+                        fontSize: "15px",
+                        color: "#6B6E81",
+                      }}
+                    >
+                      {isProvider
+                        ? distanceData.userLocation
+                        : distanceData.proLocation}
+                    </p>
+                  </li>
+                  <li style={{ display: "flex", marginLeft: "5px" }}>
+                    <img src="./distance.svg" alt="" />
+                    <p
+                      style={{
+                        marginLeft: "5px",
+                        fontSize: "15px",
+                        color: "#6B6E81",
+                      }}
+                    >
+                      {distanceData.distance}
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div className="ad-main-container2">
+              <div>
+                <span style={{ color: "#6B6E81" }}>Added on:</span>{" "}
+                {appointment.appointmentDate}
+              </div>
+              <div className="vertical-line"></div>
+              <div>
+                {" "}
+                <span style={{ color: "#6B6E81" }}>Appointment Date:</span>{" "}
+                {appointment.appointmentDate}
+              </div>
+              <div className="vertical-line"></div>
+              <div>{appointment.appointmentTime}</div>
+            </div>
+            <div className="ad-main-container3">
+              <p
+                style={{
+                  color: "#6B6E81",
+                  marginLeft: "10px",
+                  marginTop: "10px",
+                }}
+              >
+                Note: <span style={{ color: "black" }}>{appointment.note}</span>
               </p>
             </div>
-          </div>
-          <p
-            style={{
-              marginTop: "1%",
-              fontSize: "16px",
-              marginLeft: "2%",
-              fontWeight: "bold",
-            }}
-          >
-            Appointment added on:{" "}
-            <span style={{ fontWeight: "normal" }}>
-              {appointment.dateAdded}
-            </span>
-          </p>
-          <p
-            style={{
-              fontSize: "16px",
-              marginLeft: "2%",
-              fontWeight: "bold",
-            }}
-          >
-            Scheduled Appointment Date:{" "}
-            <span style={{ fontWeight: "normal" }}>
-              {appointment.appointmentDate}
-            </span>
-            <br />
-            Scheduled Appointment Time:{" "}
-            <span style={{ fontWeight: "normal" }}>
-              {appointment.appointmentTime}
-            </span>
-          </p>
-          <p
-            style={{
-              fontSize: "16px",
-              marginLeft: "2%",
-              marginTop: "1%",
-              color: "#4C40ED",
-              fontWeight: "bold",
-            }}
-          >
-            Address:
-          </p>
-          <p
-            style={{
-              fontSize: "15px",
-              marginLeft: "2%",
-              marginRight: "2%",
-              textAlign: "justify",
-            }}
-          >
-            {appointment.homeAddress}
-          </p>
-          <p
-            style={{
-              fontSize: "16px",
-              marginLeft: "2%",
-              marginTop: "1%",
-              color: "#4C40ED",
-              fontWeight: "bold",
-            }}
-          >
-            Status:
-          </p>
-          <p
-            style={{
-              fontSize: "15px",
-              marginLeft: "2%",
-              marginRight: "2%",
-              textAlign: "justify",
-            }}
-          >
-            {appointment.status}
-          </p>
-          <p
-            style={{
-              fontSize: "16px",
-              marginLeft: "2%",
-              marginTop: "1%",
-              color: "#4C40ED",
-              fontWeight: "bold",
-            }}
-          >
-            Note:
-          </p>
-          <p
-            style={{
-              fontSize: "15px",
-              marginLeft: "2%",
-              marginRight: "2%",
-              textAlign: "justify",
-            }}
-          >
-            {appointment.note}
-          </p>
-
-          <div className="ad-container2">
-            {/* <button className="btn btn-primary">Reschedule Appointment</button> */}
             {isProvider && appointment.status === "Accepted" && (
               <button
                 className="btn btn-primary text-white"
+                style={{ marginLeft: "35px", marginTop: "10px" }}
                 onClick={() =>
                   updateStatus(
                     appointment.appointmentId,
@@ -362,6 +438,7 @@ const AppointmentDetails = () => {
             {isUser && appointment.status === "Completed" && !modalOpen && (
               <button
                 className="btn btn-primary text-white"
+                style={{ marginLeft: "35px", marginTop: "10px" }}
                 onClick={() => {
                   console.log("Rate the Pro button clicked");
                   setModalOpen(true);
@@ -472,16 +549,19 @@ const AppointmentDetails = () => {
                 <br />
               </div>
             </div>
-            {!isJobFinished && (appointment.status === "Pending" || appointment.status === "Accepted") && (
-              <Link to={`/view_appointment/${searchString}`}>
-                <button
-                  className="btn btn-outline btn-primary"
-                  onClick={cancelAppointment}
-                >
-                  Cancel Appointment
-                </button>
-              </Link>
-            )}
+            {!isJobFinished &&
+              (appointment.status === "Pending" ||
+                appointment.status === "Accepted") && (
+                <Link to={`/view_appointment/${searchString}`}>
+                  <button
+                    style={{ marginLeft: "35px", marginTop: "10px" }}
+                    className="btn btn-outline btn-primary"
+                    onClick={cancelAppointment}
+                  >
+                    Cancel Appointment
+                  </button>
+                </Link>
+              )}
           </div>
         </div>
       ) : (

@@ -17,13 +17,19 @@ const Navbar = () => {
   const [isUser] = useUser();
   const userId = localStorage.getItem("userID");
   const [dataArray, setDataArray] = useState([]);
+  const [pendingAppointmentsCount, setPendingAppointmentsCount] = useState(0);
+  const [acceptedAppointmentsCount, setAcceptedAppointmentsCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+
   console.log("Admin", isAdmin);
   console.log("provider", isProvider);
   console.log("user", isUser);
   // console.log("email here: "+user.email);
   // console.log(user);
   const [user_img, setUser_img] = useState(null);
-  const apiUrl = user ? `http://localhost:5000/providers/getId/${user.email}` : null;
+  const apiUrl = user
+    ? `http://localhost:5000/providers/getId/${user.email}`
+    : null;
 
   useEffect(() => {
     if (user) {
@@ -33,13 +39,30 @@ const Navbar = () => {
           .then((data) => {
             setDataArray(data);
             setUser_img(data.map((user1) => user1.user_img)[0]);
-            console.log("img: " + user_img);
+            // console.log("img: " + user_img);
+            // Count the number of pending appointments
+            //  console.log("Data:", data);
+            const appointment = data[0].appointments;
+            //  console.log("Data:", appointment);
+            const count = appointment.reduce(
+              (acc, appointment) =>
+                acc + (appointment.status === "Pending" ? 1 : 0),
+              0
+            );
+            const count2 = appointment.reduce(
+              (acc, appointment) =>
+                acc + (appointment.status === "Accepted" ? 1 : 0),
+              0
+            );
+            setPendingAppointmentsCount(count);
+            setAcceptedAppointmentsCount(count2);
+            setTotalCount(count+count2);
           })
           .catch((error) => {
             console.error("Error fetching data:", error);
           });
       }, 500); // Adjust the delay time as needed
-  
+
       // Clear the timeout if the component unmounts or user changes
       return () => clearTimeout(timerId);
     }
@@ -182,35 +205,71 @@ const Navbar = () => {
                         alt="abcd"
                         title={user.displayName} 
                       /> */}
-                      <div className="avatar">
-                        <div className="w-12 rounded-full">
-                          <img
-                            src={user.photoURL || user_img || "./default.svg"  }
-                            alt="User's profile picture"
-                            title={user.displayName}
-                          />
+
+                      <div className="indicator">
+                        <span
+                          style={{
+                            color: "white",
+                            backgroundColor: "red",
+                            border: "none",
+                            fontSize: "11px",
+                            
+                        
+                          }}
+                          className="indicator-item badge badge-secondary w-5 h-5"
+                        >
+                          {isUser
+                            ? acceptedAppointmentsCount
+                            : totalCount}
+                        </span>
+                        <div className="avatar">
+                          <div className="w-12 rounded-full" >
+                            <img
+                              src={user.photoURL || user_img || "./default.svg"}
+                              alt="User's profile picture"
+                              title={user.displayName}
+                            />
+                          </div>
                         </div>
                       </div>
                     </button>
 
                     <ul
                       tabIndex={0}
-                      style={{ backgroundColor: "white", borderRadius: "7px" }}
+                      style={{
+                        backgroundColor: "white",
+                        borderRadius: "7px",
+                        color: "red",
+                      }}
                       className="dropdown-content z-[1] menu p-2 shadow  mt-3  w-40 "
                     >
                       <li>
                         <Link to={"/dashboard"}>Profile</Link>
                       </li>
-                      <li>
-                        <Link to={`/view_appointment/${userId}`}>
-                          Appointment
-                        </Link>
-                      </li>
-                      <li>
+                      <li className="black-text">
                         {isProvider && (
-                          <Link to={`/view_request/${userId}`}>Requests</Link>
+                          <Link to={`/view_request/${userId}`}>
+                            Requests{" "}
+                            <span>
+                              {" "}
+                              <div className="badge">
+                                {pendingAppointmentsCount}
+                              </div>
+                            </span>
+                          </Link>
                         )}
                       </li>
+                      <li>
+                        <Link to={`/view_appointment/${userId}`}>
+                          Appointment  <span>
+                              {" "}
+                              <div className="badge">
+                                {acceptedAppointmentsCount}
+                              </div>
+                            </span>
+                        </Link>
+                      </li>
+
                       <li>
                         {isAdmin && (
                           <Link

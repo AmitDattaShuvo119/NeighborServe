@@ -14,25 +14,37 @@ const Appointment = () => {
   const x = "Client";
   const y = "Pro's Name";
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      if (Array.isArray(data.appointments)) {
+        setDataArray(data.appointments);
+      } else {
+        console.error("Appointments data is not an array:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data.appointments)) {
-          setDataArray(data.appointments);
-        } else {
-          console.error("Appointments data is not an array:", data);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
+    fetchData(); // Fetch data initially
+
+    const intervalId = setInterval(fetchData, 500); // Fetch data every 5 seconds (adjust as needed)
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId);
   }, [apiUrl]);
+
+  useEffect(() => {
+    // Your logic for handling changes in dataArray
+    console.log("dataArray has changed:", dataArray);
+  }, [dataArray]);
 
   return (
     <div>
       <Navbar />
-
       <div className="at-container1">
         <div className="text-sm breadcrumbs">
           <ul>
@@ -117,8 +129,18 @@ const Appointment = () => {
           )}
         </div>
       </div>
-      <br /><br /><br /> <br /><br /><br /> <br /><br /><br /> <br /><br /><br /> <br /><br /><br /> <br />
-      <Footer/>
+      <br />
+      <br />
+      <br /> <br />
+      <br />
+      <br /> <br />
+      <br />
+      <br /> <br />
+      <br />
+      <br /> <br />
+      <br />
+      <br /> <br />
+      <Footer />
     </div>
   );
 };

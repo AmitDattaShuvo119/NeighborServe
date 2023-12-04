@@ -46,6 +46,7 @@ export const HeroSection = () => {
 
   return (
     <div>
+      
       <div
         className="flex flex-col lg:flex-row lg:gap-2 "
         style={{ marginLeft: "5px", style: "red" }}

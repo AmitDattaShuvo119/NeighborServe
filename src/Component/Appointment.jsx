@@ -18,6 +18,7 @@ const Appointment = () => {
     try {
       const response = await fetch(apiUrl);
       const data = await response.json();
+
       if (Array.isArray(data.appointments)) {
         setDataArray(data.appointments);
       } else {
@@ -80,48 +81,55 @@ const Appointment = () => {
                 </tr>
               </thead>
               <tbody>
-                {dataArray.map((appointment, index) => (
-                  <tr key={appointment.appointmentId}>
-                    <td>{index + 1}</td>
-                    <td style={{ display: "flex" }}>
-                      {isUser
-                        ? appointment.pro_name
-                        : appointment.user_fullname}{" "}
-                      {}{" "}
-                      {isUser ? (
-                        <span className="badge badge-ghost badge-sm ml-1 mt-[3px] bg-slate-300">
-                          {appointment.pro_category}
+                {dataArray
+                  .filter(
+                    (appointment) =>
+                      (isUser && (appointment.status === "Accepted" ||
+                      appointment.status === "Pending")) || (!isUser && appointment.status === "Accepted")
+                  )
+
+                  .map((appointment, index) => (
+                    <tr key={appointment.appointmentId}>
+                      <td>{index + 1}</td>
+                      <td style={{ display: "flex" }}>
+                        {isUser
+                          ? appointment.pro_name
+                          : appointment.user_fullname}{" "}
+                        {}{" "}
+                        {isUser ? (
+                          <span className="badge badge-ghost badge-sm ml-1 mt-[3px] bg-slate-300">
+                            {appointment.pro_category}
+                          </span>
+                        ) : (
+                          ""
+                        )}
+                      </td>
+                      <td>{appointment.dateAdded}</td>
+                      <td>{appointment.status}</td>
+                      <td>
+                        {appointment.appointmentDate}{" "}
+                        <span className="badge badge-ghost badge-sm ml-1">
+                          {appointment.appointmentTime}
                         </span>
-                      ) : (
-                        ""
-                      )}
-                    </td>
-                    <td>{appointment.dateAdded}</td>
-                    <td>{appointment.status}</td>
-                    <td>
-                      {appointment.appointmentDate}{" "}
-                      <span className="badge badge-ghost badge-sm ml-1">
-                        {appointment.appointmentTime}
-                      </span>
-                    </td>
-                    <td>
-                      <Link
-                        to={`/appointment_details/${searchString2}/${appointment.appointmentId}`}
-                      >
-                        <button
-                          className="btn btn-primary btn-sm"
-                          style={{
-                            backgroundColor: "white",
-                            color: "#4C40ED",
-                            border: "none",
-                          }}
+                      </td>
+                      <td>
+                        <Link
+                          to={`/appointment_details/${searchString2}/${appointment.appointmentId}`}
                         >
-                          View details
-                        </button>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                          <button
+                            className="btn btn-primary btn-sm"
+                            style={{
+                              backgroundColor: "white",
+                              color: "#4C40ED",
+                              border: "none",
+                            }}
+                          >
+                            View details
+                          </button>
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           ) : (

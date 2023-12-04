@@ -257,38 +257,68 @@ const AppointmentDetails = () => {
                       {appointment.appointmentId}
                     </p>
                   </div>{" "}
-                  {appointment.status === "Accepted" && (   <div
-                    style={{
-                      marginTop: "3px",
-                      display: "flex",
-                      fontSize: "13px",
-                      color: "#6B6E81",
-                    }}
-                  >
-                    {" "}
-                    Appointment in &nbsp;
-                    <span
+                  {appointment.status === "Accepted" && (
+                    <div
                       style={{
-                        color: "#4C40ED",
-                        fontSize: "15px",
-                        marginTop: "-1px",
+                        marginTop: "3px",
+                        display: "flex",
+                        fontSize: "13px",
+                        color: "#6B6E81",
                       }}
                     >
                       {" "}
-                      <Countdown
-                        date={`${appointment.appointmentDate} ${appointment.appointmentTime}`}
-                        renderer={({ hours, minutes, seconds, completed }) => {
-                          if (completed) {
-                            return <span>Appointment has ended!</span>;
-                          } else {
-                            const timeLeft = `${hours}h:${minutes}m:${seconds}s`;
-                            setCountdownTime(timeLeft);
-                            return <span>{timeLeft}</span>;
-                          }
+                      Appointment in &nbsp;
+                      <span
+                        style={{
+                          color: "#4C40ED",
+                          fontSize: "15px",
+                          marginTop: "-1px",
                         }}
-                      />
-                    </span>{" "}
-                  </div>)}
+                      >
+                        {" "}
+                        <Countdown
+                          date={`${appointment.appointmentDate} ${appointment.appointmentTime}`}
+                          renderer={({
+                            hours,
+                            minutes,
+                            seconds,
+                            completed,
+                          }) => {
+                            if (completed) {
+                              return <span>0s</span>;
+                            } else {
+                              const timeLeft = `${hours}h:${minutes}m:${seconds}s`;
+                              setCountdownTime(timeLeft);
+                              return (
+                                <span>
+                                  <span
+                                    className="countdown font-mono text-2xl"
+                                    style={{
+                                      fontSize: "14px",
+                                      fontFamily: "Söhne, sans-serif",
+                                    }}
+                                  >
+                                    <span
+                                      style={{ "--value": `${hours}` }}
+                                    ></span>
+                                    h &nbsp;
+                                    <span
+                                      style={{ "--value": `${minutes}` }}
+                                    ></span>
+                                    m&nbsp;
+                                    <span
+                                      style={{ "--value": `${seconds}` }}
+                                    ></span>
+                                    s
+                                  </span>
+                                </span>
+                              );
+                            }
+                          }}
+                        />
+                      </span>{" "}
+                    </div>
+                  )}
                 </div>
 
                 <div
@@ -299,7 +329,7 @@ const AppointmentDetails = () => {
                       appointment.status === "Pending"
                         ? "#ff7e26"
                         : appointment.status === "Accepted"
-                        ? "#a4fba6"
+                        ? "#78be20"
                         : appointment.status === "Completed"
                         ? "#0f9200"
                         : appointment.status === "Done"
@@ -311,6 +341,7 @@ const AppointmentDetails = () => {
                     alignItems: "center",
                     justifyContent: "center",
                     borderRadius: "25px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)", // Add box shadow
                   }}
                 >
                   {appointment.status}
@@ -408,17 +439,21 @@ const AppointmentDetails = () => {
               <div className="vertical-line"></div>
               <div>{appointment.appointmentTime}</div>
             </div>
-            <div className="ad-main-container3">
-              <p
-                style={{
-                  color: "#6B6E81",
-                  marginLeft: "10px",
-                  marginTop: "10px",
-                }}
-              >
-                Note: <span style={{ color: "black" }}>{appointment.note}</span>
-              </p>
-            </div>
+            {appointment.note && (
+              <div className="ad-main-container3">
+                <p
+                  style={{
+                    color: "#6B6E81",
+                    marginLeft: "10px",
+                    marginTop: "10px",
+                  }}
+                >
+                  Note:{" "}
+                  <span style={{ color: "black" }}>{appointment.note}</span>
+                </p>
+              </div>
+            )}
+
             {isProvider && appointment.status === "Accepted" && (
               <button
                 className="btn btn-primary text-white"

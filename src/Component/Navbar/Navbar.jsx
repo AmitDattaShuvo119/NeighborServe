@@ -31,42 +31,42 @@ const Navbar = () => {
     ? `http://localhost:5000/providers/getId/${user.email}`
     : null;
 
+  const fetchData = async () => {
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setDataArray(data);
+      setUser_img(data.map((user1) => user1.user_img)[0]);
+      const appointment = data[0].appointments;
+      const count = appointment.reduce(
+        (acc, appointment) => acc + (appointment.status === "Pending" ? 1 : 0),
+        0
+      );
+      const count2 = appointment.reduce(
+        (acc, appointment) => acc + (appointment.status === "Accepted" ? 1 : 0),
+        0
+      );
+      setPendingAppointmentsCount(count);
+      setAcceptedAppointmentsCount(count2);
+      setTotalCount(count + count2);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      const timerId = setTimeout(() => {
-        fetch(apiUrl)
-          .then((response) => response.json())
-          .then((data) => {
-            setDataArray(data);
-            setUser_img(data.map((user1) => user1.user_img)[0]);
-            // console.log("img: " + user_img);
-            // Count the number of pending appointments
-            //  console.log("Data:", data);
-            const appointment = data[0].appointments;
-            //  console.log("Data:", appointment);
-            const count = appointment.reduce(
-              (acc, appointment) =>
-                acc + (appointment.status === "Pending" ? 1 : 0),
-              0
-            );
-            const count2 = appointment.reduce(
-              (acc, appointment) =>
-                acc + (appointment.status === "Accepted" ? 1 : 0),
-              0
-            );
-            setPendingAppointmentsCount(count);
-            setAcceptedAppointmentsCount(count2);
-            setTotalCount(count+count2);
-          })
-          .catch((error) => {
-            console.error("Error fetching data:", error);
-          });
-      }, 500); // Adjust the delay time as needed
+      fetchData(); // Fetch data initially
+      console.log("acceptedAppointmentsCount: abcd", acceptedAppointmentsCount);
+console.log("isUser:", isUser);
 
-      // Clear the timeout if the component unmounts or user changes
-      return () => clearTimeout(timerId);
+
+      const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds (adjust as needed)
+
+      // Clear the interval on component unmount or user changes
+      return () => clearInterval(intervalId);
     }
-  }, [user, apiUrl]);
+  }, [user]);
 
   const handleLogOut = () => {
     logout()
@@ -207,23 +207,22 @@ const Navbar = () => {
                       /> */}
 
                       <div className="indicator">
-                        <span
-                          style={{
-                            color: "white",
-                            backgroundColor: "red",
-                            border: "none",
-                            fontSize: "11px",
-                            
-                        
-                          }}
-                          className="indicator-item badge badge-secondary w-5 h-5"
-                        >
-                          {isUser
-                            ? acceptedAppointmentsCount
-                            : totalCount}
-                        </span>
+                        {(acceptedAppointmentsCount !== 0 && isUser) ||
+                          (isProvider && totalCount !== 0 && (
+                            <span
+                              style={{
+                                color: "white",
+                                backgroundColor: "red",
+                                border: "none",
+                                fontSize: "11px",
+                              }}
+                              className="indicator-item badge badge-secondary w-5 h-5"
+                            >
+                              {isUser ? acceptedAppointmentsCount : totalCount}
+                            </span>
+                          ))}
                         <div className="avatar">
-                          <div className="w-12 rounded-full" >
+                          <div className="w-12 rounded-full">
                             <img
                               src={user.photoURL || user_img || "./default.svg"}
                               alt="User's profile picture"
@@ -244,7 +243,7 @@ const Navbar = () => {
                       className="dropdown-content z-[1] menu p-2 shadow  mt-3  w-40 "
                     >
                       <li>
-                        <Link to={"/dashboard"}>Profile</Link>
+                        <Link to={`/user_profile/${userId}`}>Profile</Link>
                       </li>
                       <li className="black-text">
                         {isProvider && (
@@ -261,12 +260,13 @@ const Navbar = () => {
                       </li>
                       <li>
                         <Link to={`/view_appointment/${userId}`}>
-                          Appointment  <span>
-                              {" "}
-                              <div className="badge">
-                                {acceptedAppointmentsCount}
-                              </div>
-                            </span>
+                          Appointment{" "}
+                          <span>
+                            {" "}
+                            <div className="badge">
+                              {acceptedAppointmentsCount}
+                            </div>
+                          </span>
                         </Link>
                       </li>
 

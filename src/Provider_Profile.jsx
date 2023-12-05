@@ -39,7 +39,6 @@ function Provider_Profile() {
       });
   }, []);
 
-
   const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
 
   useEffect(() => {
@@ -152,6 +151,171 @@ function Provider_Profile() {
   function validateForm() {
     return selectedSlot && homeAddress && note;
   }
+
+  const [messages, setMessages] = useState({});
+  const [chat, setChat] = useState({});
+  console.log("Chat: ", chat);
+  console.log("msg: ", messages);
+
+  const [conversationCreated, setConversationCreated] = useState(false);
+  const [convo, setConvo] = useState([]);
+  const FetchConversations = async (conversationId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/providers/conversations/${conversationId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Make sure to await the result of res.json()
+      const resultData = await res.json();
+
+      console.log("Response Data:", resultData); // Log the response data
+      setConvo(resultData);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      // Handle the error as needed, e.g., set an error state
+    }
+  };
+  useEffect(() => {
+    const conversationId = messages?.conversationId;
+    console.log("ConversationId of FetchConversations", conversationId);
+    FetchConversations(conversationId);
+  }, []);
+  useEffect(() => {
+    const fetchChat = async () => {
+      const result = await fetch(
+        `http://localhost:5000/providers/conversations/${searchString2}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const resultData = await result.json();
+      setChat(resultData);
+    };
+    fetchChat();
+  }, []);
+  const FetchMessages = async (conversationId, receiver) => {
+    try {
+      const url = `http://localhost:5000/providers/message/${conversationId}?senderId=${searchString2}&&receiverId=${receiver?.id}`;
+      console.log("Fetching from URL:", url);
+
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const resultData = await res.json();
+
+      setMessages({ messages: resultData, receiver, conversationId });
+
+      console.log("Fetched Messages:", resultData);
+    } catch (error) {
+      console.error("Error occurred:", error);
+    }
+  };
+
+  const createNewConversation = async (receiver) => {
+    try {
+      console.log("Receiver.", receiver);
+      console.log("Receiver.", messages?.messages?.conversationId);
+      if (messages?.messages?.conversationId) {
+        // Conversation has already been created, do not create again
+        console.log("Conversation already created.");
+        return;
+      }
+
+      const res = await fetch("http://localhost:5000/providers/conversations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          senderId: searchString2, // Assuming userId is the sender's ID
+          receiverId: receiver.id,
+          conversationId: messages?.messages?.conversationId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const resultData = await res.json();
+      console.log("New Conversation Created:", resultData);
+
+      // Fetch messages for the new conversation
+      const conversationId = "new";
+      await FetchMessages(conversationId, receiver);
+
+      // Set conversationCreated to true to indicate that the conversation has been created
+      // setConversationCreated(true);
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+    }
+  };
+
+  // const createNewConversation = async (receiver) => {
+  //   try {
+
+  //     // Check if a conversation already exists with the same conversationId
+  //     const existingConversation = convo.find((c) => c._id === conversationId);
+
+  //     if (existingConversation) {
+  //       // Conversation already exists, fetch messages for the existing conversation
+  //       await FetchMessages(existingConversation._id, receiver);
+  //       console.log('Conversation already exists:', existingConversation);
+  //       return;
+  //     }
+
+  //     // console.log('Convo:', convo);
+  //     console.log('My_ConversationID:', conversationId);
+  //     // Conversation does not exist, create a new conversation
+  //     const res = await fetch('http://localhost:5000/providers/conversations', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         senderId: searchString2,
+  //         receiverId: receiver.id,
+  //         conversationId: conversationId,
+  //       }),
+  //     });
+
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
+
+  //     const resultData = await res.json();
+  //     console.log('New Conversation Created:', resultData);
+
+  //     // Fetch messages for the new conversation
+  //     await FetchMessages('new', receiver);
+
+  //     // Update the list of conversations (convo state)
+  //     setConvo([
+  //       ...convo,
+  //       { _id: resultData.insertedId, members: [searchString2, receiver.id] },
+  //     ]);
+
+  //   } catch (error) {
+  //     console.error('Error creating or fetching conversation:', error);
+  //   }
+  // };
 
   return (
     <div>
@@ -298,12 +462,27 @@ function Provider_Profile() {
                       >
                         Favorite
                       </button>
-                      <button
-                        style={{ marginLeft: "3%" }}
-                        className="btn bg-blue-purple btn-sm text-white w-24 h-10"
-                      >
-                        Message
-                      </button>
+                      <Link to={`/chats`}>
+                        <button
+                          style={{ marginLeft: "3%" }}
+                          className="btn bg-blue-purple btn-sm text-white w-24 h-10"
+                          onClick={async () => {
+                            const user = {
+                              name: person.user_fullname,
+                              email: person.user_email,
+                              id: person._id,
+                            };
+                            console.log(searchString2);
+                            if (searchString2) {
+                              await createNewConversation(user);
+                            } else {
+                              console.log("Invalid conversationId:");
+                            }
+                          }}
+                        >
+                          Message
+                        </button>
+                      </Link>
                     </div>
                   </div>
                 </div>

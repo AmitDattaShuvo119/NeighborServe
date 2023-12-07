@@ -58,8 +58,7 @@ const Navbar = () => {
     if (user) {
       fetchData(); // Fetch data initially
       console.log("acceptedAppointmentsCount: abcd", acceptedAppointmentsCount);
-console.log("isUser:", isUser);
-
+      console.log("isUser:", isUser);
 
       const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds (adjust as needed)
 
@@ -142,7 +141,7 @@ console.log("isUser:", isUser);
             <Link to={"/browse_service"} className="text-xl c1 mr-7 s-text">
               Services
             </Link>
-            <Link to={"/"} className="text-xl c1 s-text">
+            <Link to={"/about"} className="text-xl c1 s-text">
               About us
             </Link>
 
@@ -310,6 +309,11 @@ console.log("isUser:", isUser);
                               Log In
                             </Link>
                           )}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={"/chats"} className="text-sm ">
+                          Message
                         </Link>
                       </li>
                     </ul>

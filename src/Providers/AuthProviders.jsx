@@ -90,6 +90,10 @@ const AuthProviders = ({ children }) => {
   const storedUserId = localStorage.getItem("userID");
   const storedUserImg = localStorage.getItem("userImg");  // Retrieve userId
 
+  const [currentConversation, setCurrentConversation] = useState(null);
+  const [chat, setChat] = useState([]);
+  const [messages, setMessages] = useState({});
+  const [convo, setConvo] = useState([]);
   const authInfo = {
     user,
     createUser,
@@ -101,7 +105,15 @@ const AuthProviders = ({ children }) => {
     storedUserUid,
     storedUserEmail,
     storedUserId,
-    storedUserImg, // Include storedUserId in the context
+    storedUserImg,
+    currentConversation,
+    setCurrentConversation,
+    setChat,
+    setMessages,
+    chat,
+    messages ,
+    convo,
+    setConvo// Include storedUserId in the context
   };
 
   return (

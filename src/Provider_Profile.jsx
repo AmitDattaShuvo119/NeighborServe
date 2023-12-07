@@ -6,6 +6,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import CommentList from "./Component/Comment";
 import Footer from "./Component/Footer/Footer";
 import axios from "axios";
+import { useContext } from "react";
+import { AuthContext } from "./Providers/AuthProviders";
 // import { v4 as uuidv4 } from "uuid";
 
 function Provider_Profile() {
@@ -152,17 +154,27 @@ function Provider_Profile() {
     return selectedSlot && homeAddress && note;
   }
 
-  const [messages, setMessages] = useState({});
-  const [chat, setChat] = useState({});
+  // console.log("Chat: ", chat);
+  // console.log("msg: ", messages);
+
+  const {
+    currentConversation,
+    setCurrentConversation,
+    chat,
+    setChat,
+    messages,
+    setMessages,
+    convo,
+    setConvo,
+  } = useContext(AuthContext);
   console.log("Chat: ", chat);
   console.log("msg: ", messages);
 
-  const [conversationCreated, setConversationCreated] = useState(false);
-  const [convo, setConvo] = useState([]);
-  const FetchConversations = async (conversationId) => {
+  // const [convo, setConvo] = useState([]);
+  const FetchConversations = async (id) => {
     try {
       const res = await fetch(
-        `http://localhost:5000/providers/conversations/${conversationId}`,
+        `http://localhost:5000/chatApp/conversations/${id}`,
         {
           method: "GET",
           headers: {
@@ -182,14 +194,15 @@ function Provider_Profile() {
     }
   };
   useEffect(() => {
-    const conversationId = messages?.conversationId;
-    console.log("ConversationId of FetchConversations", conversationId);
-    FetchConversations(conversationId);
+    // const id = messages?.conversationId;
+    // console.log("ConversationId of FetchConversations", id);
+    FetchConversations(searchString2);
   }, []);
+  // console.log("CONVO: ",convo);
   useEffect(() => {
     const fetchChat = async () => {
-      const result = await fetch(
-        `http://localhost:5000/providers/conversations/${searchString2}`,
+      const res = await fetch(
+        `http://localhost:5000/chatApp/conversations/${searchString2}`,
         {
           method: "GET",
           headers: {
@@ -197,14 +210,14 @@ function Provider_Profile() {
           },
         }
       );
-      const resultData = await result.json();
-      setChat(resultData);
+      const result = await res.json();
+      setChat(result);
     };
     fetchChat();
   }, []);
   const FetchMessages = async (conversationId, receiver) => {
     try {
-      const url = `http://localhost:5000/providers/message/${conversationId}?senderId=${searchString2}&&receiverId=${receiver?.id}`;
+      const url = `http://localhost:5000/chatApp/message/${conversationId}?senderId=${searchString2}&&receiverId=${receiver?.id}`;
       console.log("Fetching from URL:", url);
 
       const res = await fetch(url, {
@@ -228,25 +241,75 @@ function Provider_Profile() {
     }
   };
 
+  // const createNewConversation = async (receiver) => {
+  //   try {
+  //     console.log("Receiver.", receiver);
+  //     console.log("ConversationId", convo?.conversationId);
+  //     if (convo?.conversationId) {
+  //       // Conversation has already been created, do not create again
+  //       console.log("Conversation already created.");
+  //       return;
+  //     }
+
+  //     const res = await fetch("http://localhost:5000/providers/conversations", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         senderId: searchString2, // Assuming userId is the sender's ID
+  //         receiverId: receiver.id,
+  //         conversationId: messages?.messages?.conversationId,
+  //       }),
+  //     });
+
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
+
+  //     const resultData = await res.json();
+  //     console.log("New Conversation Created:", resultData);
+
+  //     // Fetch messages for the new conversation
+  //     const conversationId = "new";
+  //     await FetchMessages(conversationId, receiver);
+
+  //     // Set conversationCreated to true to indicate that the conversation has been created
+  //     // setConversationCreated(true);
+  //   } catch (error) {
+  //     console.error("Error creating conversation:", error);
+  //   }
+  // };
+  // const {currentConversation,setCurrentConversation}=useContext(AuthContext);
   const createNewConversation = async (receiver) => {
     try {
-      console.log("Receiver.", receiver);
-      console.log("Receiver.", messages?.messages?.conversationId);
-      if (messages?.messages?.conversationId) {
-        // Conversation has already been created, do not create again
-        console.log("Conversation already created.");
+      const conversationId = "new"; // Replace 'new' with the actual conversationId you are using
+
+      // Check if a conversation already exists with the same conversationId
+      const existingConversation = convo.find((c) => c._id === conversationId);
+
+      if (existingConversation) {
+        // Conversation already exists, set it as the current conversation
+        setCurrentConversation(resultData.insertedId);
+
+        // Fetch messages for the new conversation
+        const conversationId = resultData.insertedId;
+        await FetchMessages(conversationId, receiver);
         return;
       }
 
-      const res = await fetch("http://localhost:5000/providers/conversations", {
+      console.log("Convo:", convo);
+
+      // Conversation does not exist, create a new conversation
+      const res = await fetch("http://localhost:5000/chatApp/conversations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          senderId: searchString2, // Assuming userId is the sender's ID
+          senderId: searchString2,
           receiverId: receiver.id,
-          conversationId: messages?.messages?.conversationId,
+          conversationId: conversationId,
         }),
       });
 
@@ -258,13 +321,15 @@ function Provider_Profile() {
       console.log("New Conversation Created:", resultData);
 
       // Fetch messages for the new conversation
-      const conversationId = "new";
       await FetchMessages(conversationId, receiver);
 
-      // Set conversationCreated to true to indicate that the conversation has been created
-      // setConversationCreated(true);
+      // Set the new conversation as the current conversation
+      setCurrentConversation({
+        _id: resultData.insertedId,
+        members: [searchString2, receiver.id],
+      });
     } catch (error) {
-      console.error("Error creating conversation:", error);
+      console.error("Error creating or fetching conversation:", error);
     }
   };
 
@@ -323,7 +388,7 @@ function Provider_Profile() {
       {dataArray
         // .filter((person) => person.user_id === val)
         .map((person, personIndex) => (
-          <div className="pp-container0">
+          <div className="pp-container0" key={personIndex}>
             <div style={{ display: "flex", height: "50px" }}>
               <img
                 src="back.png"

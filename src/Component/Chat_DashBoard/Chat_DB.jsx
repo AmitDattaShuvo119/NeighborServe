@@ -1,102 +1,108 @@
-import React, { useState, useEffect,useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import avatar from "../../assets/user2.png";
 import sent from "../../assets/send.png";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import { io } from "socket.io-client";
-// import { AuthContext } from "../../Providers/AuthProviders"
+import { AuthContext } from "../../Providers/AuthProviders";
 
 const Chat_DB = () => {
   const userId = localStorage.getItem("userID");
   const [user, setUser] = useState(JSON.stringify(userId));
   const [userDetails, setUserDetails] = useState([]);
-  const [chat, setChat] = useState([]);
-  const [messages, setMessages] = useState({});
+
   const [message, setMessage] = useState();
   const [users, setUsers] = useState([]);
   const [socket, setSocket] = useState(null);
 
+  const {
+    currentConversation,
+    setCurrentConversation,
+    chat,
+    setChat,
+    messages,
+    setMessages,
+    convo,
+    setConvo,
+  } = useContext(AuthContext);
   console.log("MessagesChat: ", chat);
   console.log("MessagesUsers: ", users);
   // const { fetchMessages ,msg,setMsg} = useContext(AuthContext);
- 
-  
+
   //Socket_IO_Client
-//   useEffect(() => {
-//     setSocket(io("http://localhost:8080"));
-//   }, []);
-// //send to SocketServer
-//   useEffect(() => {
-//     console.log("Emitting 'addUser' event with userId:", userId);
-//     socket?.emit("addUser", userId);
-//     socket?.on("getUsers",Users=>{
-//       console.log('Active Users',Users);
-//     })
-//   }, [socket]);
-//   console.log("Socket : ",socket);
+  //   useEffect(() => {
+  //     setSocket(io("http://localhost:8080"));
+  //   }, []);
+  // //send to SocketServer
+  //   useEffect(() => {
+  //     console.log("Emitting 'addUser' event with userId:", userId);
+  //     socket?.emit("addUser", userId);
+  //     socket?.on("getUsers",Users=>{
+  //       console.log('Active Users',Users);
+  //     })
+  //   }, [socket]);
+  //   console.log("Socket : ",socket);
 
-useEffect(() => {
-  setSocket(io("http://localhost:8080"));
-}, []);
+  useEffect(() => {
+    setSocket(io("http://localhost:8080"));
+  }, []);
 
-// Send to SocketServer
-useEffect(() => {
-  console.log("Emitting 'addUser' event with userId:", userId);
-  socket?.emit("addUser", userId);
+  // Send to SocketServer
+  useEffect(() => {
+    console.log("Emitting 'addUser' event with userId:", userId);
+    socket?.emit("addUser", userId);
 
-  socket?.on("getUsers", Users => {
-    console.log('Active Users', Users);
-  });
-
-  socket?.on('getMessage', data => {
-    
-    setMessages(prev => ({
-      ...prev,
-      messages: [
-        ...prev.messages, // Initialize to an empty array if undefined
-        { user:data.user, message: data.message }
-      ]
-    }));
-    console.log("Data:", data);
-  });
-}, [socket]);
-
-
-const sendMessage = async (e) => {
-  try {
-
-    socket?.emit('sendMessage',{
-      conversationId: messages?.conversationId,
-      senderId: userId,
-      message,
-      receiverId: messages?.receiver?.receiverId,
+    socket?.on("getUsers", (Users) => {
+      console.log("Active Users", Users);
     });
-    const res = await fetch(`http://localhost:5000/providers/message`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+
+    socket?.on("getMessage", (data) => {
+      setMessages((prev) => ({
+        ...prev,
+        messages: [
+          ...prev.messages, // Initialize to an empty array if undefined
+          { user: data.user, message: data.message },
+        ],
+      }));
+      console.log("Data:", data);
+    });
+  }, [socket]);
+
+  const sendMessage = async (e) => {
+    try {
+      socket?.emit("sendMessage", {
         conversationId: messages?.conversationId,
         senderId: userId,
         message,
         receiverId: messages?.receiver?.receiverId,
-      }),
-    });
+      });
+      const res = await fetch(`http://localhost:5000/chatApp/message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          conversationId: messages?.conversationId,
+          senderId: userId,
+          message,
+          receiverId: messages?.receiver?.receiverId,
+        }),
+      });
 
-    if (!res.ok) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const resData = await res.json();
+      console.log("resData :>>", resData);
+
+      setMessage("");
+    } catch (error) {
+      console.error("Error sending message:", error);
+      // Handle the error as needed (e.g., show an error message to the user)
     }
+  };
 
-    const resData = await res.json();
-    console.log("resData :>>", resData);
-
-    setMessage("");
-  } catch (error) {
-    console.error("Error sending message:", error);
-    // Handle the error as needed (e.g., show an error message to the user)
-  }
-};
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -136,7 +142,7 @@ const sendMessage = async (e) => {
   useEffect(() => {
     const fetchChat = async () => {
       const result = await fetch(
-        `http://localhost:5000/providers/conversations/${userId}`,
+        `http://localhost:5000/chatApp/conversations/${userId}`,
         {
           method: "GET",
           headers: {
@@ -154,32 +160,32 @@ const sendMessage = async (e) => {
   console.log("Chat", chat);
 
   // const [convo, setConvo] = useState([]);
-  // const FetchConversations = async (conversationId) => {
-  //   try {
-  //     const res = await fetch(
-  //       `http://localhost:5000/providers/conversations/${conversationId}`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       }
-  //     );
+  const FetchConversations = async (conversationId) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/chatApp/conversations/${conversationId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  //     // Make sure to await the result of res.json()
-  //     const resultData = await res.json();
+      // Make sure to await the result of res.json()
+      const resultData = await res.json();
 
-  //     console.log("Response Data:", resultData); // Log the response data
-  //     setConvo(resultData);
-  //   } catch (error) {
-  //     console.error("Error fetching conversations:", error);
-  //     // Handle the error as needed, e.g., set an error state
-  //   }
-  // };
-  // useEffect(() => {
-  //   const conversationId = messages?.conversationId;
-  //   FetchConversations(conversationId);
-  // }, []);
+      console.log("Response Data:", resultData); // Log the response data
+      setConvo(resultData);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      // Handle the error as needed, e.g., set an error state
+    }
+  };
+  useEffect(() => {
+    const conversationId = messages?.conversationId;
+    FetchConversations(conversationId);
+  }, []);
 
   console.log("Messages: ", messages);
   console.log("MessagesVal: ", messages.receiver);
@@ -188,7 +194,7 @@ const sendMessage = async (e) => {
     const fetchUsers = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/providers/users/${userId}`,
+          `http://localhost:5000/chatApp/users/${userId}`,
           {
             method: "GET",
             headers: {
@@ -223,7 +229,7 @@ const sendMessage = async (e) => {
 
   const FetchMessages = async (conversationId, receiver) => {
     try {
-      const url = `http://localhost:5000/providers/message/${conversationId}?senderId=${userId}&&receiverId=${receiver?.receiverId}`;
+      const url = `http://localhost:5000/chatApp/message/${conversationId}?senderId=${userId}&&receiverId=${receiver?.receiverId}`;
       console.log("Fetching from URL:", url);
 
       const res = await fetch(url, {
@@ -241,77 +247,87 @@ const sendMessage = async (e) => {
 
       setMessages({ messages: resultData, receiver, conversationId });
 
-     
       console.log("Fetched Messages:", messages);
     } catch (error) {
       console.error("Error occurred:", error);
     }
   };
 
-  
+  console.log("currentConversation: ", currentConversation);
+
+  console.log("currentConversation: ", currentConversation);
   return (
     <>
       <Navbar />
-      <div className="w-screen h-screen flex justify-center items-center ">
-        {userId &&  <div className="w-[25%] h-full border border-primary overflow-y-auto">
-          {userDetails.map((conversation, index) => (
-            <div key={index} className="flex justify-center my-6">
-              <div className="rounded-full border p-[10px] border-primary cursor-pointer">
-                <img src={avatar} alt="user" width={75} height={75} />
-              </div>
-              <div className="ml-8 my-2">
-                <h3 className="text-xs">{conversation.user_fullname}</h3>
-                <p className="text-xs font-light">My Address</p>
-              </div>
-            </div>
-          ))}
-          <hr />
-
-          <div>
-            <div className=" w-full ">
-              <div className="mr-9 text-primary">Messages</div>
-
-              {chat && chat.length > 0 ? (
-                chat.map(({ conversationId, user }) => (
-                  <div
-                    className="flex justify-center my-6 border-b border-b-gray-300 overflow-y-auto "
-                    onClick={async () => {
-                      // const conversationId = CHAT?.conversationId;
-
-                      if (conversationId) {
-                        await FetchMessages(conversationId, user);
-                      } else {
-                        console.error("Invalid conversationId:", error);
-                      }
-                    }}
-                  >
-                    <div className="rounded-full border p-[10px] border-primary cursor-pointer">
-                      <img src={avatar} alt="user" width={50} height={60} />
-                    </div>
-                    <div className="ml-8 my-2">
-                      {/* <h3 className="text-xs">{c.user.email.split("@")[0]}</h3> */}
-                      <p className="text-xs font-semibold">{user?.name}</p>
-                      <p className="text-xs font-semibold">{user?.email}</p>
-                    </div>
+      <div className="w-screen max-h-max flex justify-center items-center ">
+        {!(messages?.receiver?.name )&& (
+          <div className="w-[25%] h-full bg-violet-200 rounded-lg  overflow-y-auto">
+            {userDetails.map((conversation, index) => (
+              <div key={index} className="flex justify-center my-6">
+                <div className="avatar">
+                  <div className="w-12 rounded-full">
+                    <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
                   </div>
-                ))
-              ) : (
-                <div className=" text-center text-gray-500  mt-20 text-lg font-semibold">
-                  No Conversations
                 </div>
-              )}
+                <div className="ml-8 my-2 ">
+                  <h3 className="text-xs">{conversation.user_fullname}</h3>
+                  <p className="text-xs font-light">
+                    {conversation.user_email}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <hr />
+
+            <div>
+              <div className=" w-full ">
+                <div className="mr-9 text-center text-primary">Messages</div>
+
+                {chat && chat.length > 0 ? (
+                  chat.map(({ conversationId, user }, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-center my-6 border-b border-b-gray-300 overflow-y-auto "
+                      onClick={async () => {
+                        // const conversationId = CHAT?.conversationId;
+
+                        if (conversationId) {
+                          await FetchMessages(conversationId, user);
+                        } else {
+                          console.error("Invalid conversationId:", error);
+                        }
+                      }}
+                    >
+                      <div className="avatar">
+                        <div className="w-12 rounded-full">
+                          <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                        </div>
+                      </div>
+                      <div className="ml-8 my-2">
+                        {/* <h3 className="text-xs">{c.user.email.split("@")[0]}</h3> */}
+                        <p className="text-xs font-semibold">{user?.name}</p>
+                        <p className="text-xs font-semibold">{user?.email}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className=" text-center text-gray-500  mt-20 text-lg font-semibold">
+                    No Conversations
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        }
-       
+        )}
 
-        <div className="w-[50%] h-screen border border-primary flex flex-col items-center ">
-          <div className="w-[75%] bg-secondary h-[50px] mt-9 rounded-full flex items-center shadow-sm ">
+        <div className="w-[50%] h-screen border border-primary rounded-lg flex flex-col items-center ">
+          <div className="w-[75%] bg-violet-200 h-[50px] mt-9 rounded-full flex items-center shadow-sm p-6  ">
             {messages?.receiver?.name && (
-              <div className="flex justify-center my-6 border-b border-b-gray-300 ml-4">
-                <div className="rounded-full border p-[4px] border-primary cursor-pointer">
-                  <img src={avatar} alt="user" width={50} height={50} />
+              <div className="flex justify-center   my-6 border-b border-b-gray-300 ml-4">
+                <div className="avatar">
+                  <div className="w-12 rounded-full">
+                    <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                  </div>
                 </div>
                 <div className="ml-8 my-2">
                   <h3 className="text-xs">{messages?.receiver?.name}</h3>
@@ -330,10 +346,10 @@ const sendMessage = async (e) => {
                   messages.messages.map(({ message, user = {} }, index) => (
                     <div
                       key={index}
-                      className={`max-w-[40%] h-[70px] sm:w-[100px] lg:w-[300px] rounded-b-lg ml-auto p-4 mb-6 ${
+                      className={`chat-bubble chat-bubble-primary chat-start max-w-[60%] h-[70px] sm:w-[100px] lg:w-[300px] rounded-b-lg ml-auto p-4 mb-6 ${
                         userId === user?.id
                           ? "text-white rounded-tr-lg bg-primary"
-                          : "bg-secondary mr-40 rounded-b-lg rounded-tr-xl"
+                          : "bg-secondary text-primary mr-40 rounded-b-lg rounded-tr-xl"
                       }`}
                     >
                       {message}
@@ -375,40 +391,6 @@ const sendMessage = async (e) => {
             </div>
           )}
         </div>
-       {userId &&  <div className="w-[25%] h-screen border border-primary overflow-scroll ">
-          <div className="mr-9 text-primary p-4 ml-20">Peoples</div>
-          <div>
-            {users && users.length > 0 ? (
-              users.map(({ UserId, user }) => (
-                <div
-                  className="flex justify-center my-6 border-b border-b-gray-300 overflow-y-auto "
-                  onClick={async () => {
-                    // const conversationId = CHAT?.conversationId;
-                    console.log(UserId);
-                    if (UserId) {
-                      await FetchMessages("new", user);
-                    } else {
-                      console.log("Invalid conversationId:");
-                    }
-                  }}
-                >
-                  <div className="rounded-full border p-[10px] border-primary cursor-pointer">
-                    <img src={avatar} alt="user" width={50} height={60} />
-                  </div>
-                  <div className="ml-8 my-2">
-                    {/* <h3 className="text-xs">{c.user.email.split("@")[0]}</h3> */}
-                    <p className="text-xs font-semibold">{user?.name}</p>
-                    <p className="text-xs font-semibold">{user?.email}</p>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className=" text-center text-gray-500  mt-20 text-lg font-semibold">
-                No Conversations
-              </div>
-            )}
-          </div>
-        </div>}
       </div>
       <Footer />
     </>

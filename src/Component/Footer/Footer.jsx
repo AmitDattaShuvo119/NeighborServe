@@ -1,5 +1,6 @@
 import React from "react";
 import "../Navbar/index.css";
+import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <div>
@@ -12,10 +13,10 @@ const Footer = () => {
         </nav>
         <nav>
           <header className="footer-title">Company</header>
-          <a className="link  c1">About us</a>
-          <a className="link  c1">Contact Us</a>
-          <a className="link  c1">Terms and Policies</a>
-          <a className="link  c1">Do not Sell or Share My Information</a>
+          <Link to={`/about`} className="link  c1">About us</Link>
+          <Link className="link  c1">Contact Us</Link>
+          <Link to={`/policy`} className="link  c1">Terms and Policies</Link>
+          <Link className="link  c1">Do not Sell or Share My Information</Link>
         </nav>
         <nav>
           <header className="footer-title">Social</header>

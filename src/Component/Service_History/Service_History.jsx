@@ -9,7 +9,7 @@ const Service_History = () => {
   const [serviceHistory, setServiceHistory] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/providers/service_history', {
+    fetch('http://localhost:5000/chatApp/service_history', {
       method: 'GET',
     })
       .then((response) => response.json())

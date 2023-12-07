@@ -23,6 +23,7 @@ import Adminmanageprovider from "../Component/AdminDashboard/Adminmanageprovider
 import AdminVerifyProvider from "../Component/AdminDashboard/AdminVerifyProvider";
 import ReqAppointment from "../Component/ReqAppointment";
 import UserProfile from "../UserProfile";
+import Testing4 from "../Testing4";
 
 
 export const router = createBrowserRouter([
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
   {
     path: "testing3",
     element: <Testing3 />,
+  },
+  {
+    path: "testing4",
+    element: <Testing4 />,
   },
 
   {

@@ -14,6 +14,7 @@ const ProfileComponent = (props) => {
     user_img,
     user_icon,
     user_rating,
+    user_reviews,
   } = props;
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
@@ -34,17 +35,22 @@ const ProfileComponent = (props) => {
   const buttonStyles = {
     marginLeft: screenWidth >= 768 ? "64%" : "1%", // Adjust the breakpoint and margin values as needed
     marginTop: screenWidth >= 768 ? "38%" : "1%",
+    fontFamily: "Inter, sans-serif",
   };
   const buttonStyles2 = {
     marginLeft: screenWidth >= 768 ? "64%" : "5%", // Adjust the breakpoint and margin values as needed
     marginTop: screenWidth >= 768 ? "5%" : "1%",
+    fontFamily: "Inter, sans-serif",
   };
 
   return (
     <div>
       <div className="pc-container1">
-        <div className="avatar">
-          <div className="w-44 h-44 rounded">
+        <div className="avatar" >
+          <div
+            className="rounded-md w-44 h-[200px]"
+           
+          >
             <img src={user_img} />
           </div>
         </div>
@@ -55,7 +61,7 @@ const ProfileComponent = (props) => {
           </p>
 
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div className="pc-container3" >
+            <div className="pc-container3">
               <img
                 src="gps.svg"
                 alt="Icon Description"
@@ -72,9 +78,8 @@ const ProfileComponent = (props) => {
               />
               &nbsp;Member since {user_regYear}
             </div>
-          
 
-          {/* <div className="pc-container3">
+            {/* <div className="pc-container3">
             <img
               src="trophy.svg"
               alt="Icon Description"
@@ -86,36 +91,52 @@ const ProfileComponent = (props) => {
               Hired {user_hireCount} times
             </p>
           </div>{" "} */}
-          <div className="pc-container3">
-            <img
-              style={{ height: "25px", width: "25px" }}
-              src="v.svg"
-              alt=""
-            />
-            {/* <Icon_info index={user_icon} /> */}
-           
-            <p style={{ marginTop:"0.5%" }}> &nbsp;{user_verficationStatus}&nbsp;{" "} Verified</p>
-          </div>
-         
-         
-          <div
-            className="pc-container3"
-            style={{ marginTop:"-0.5%" }}
-          >
-            <img style={{ height: "25px", width: "25px" }} src="./Star.svg" alt="" />
-            &nbsp;
-            <p className="pp-container12" style={{ marginTop:"0.8%" }}>
-              {user_rating} <span > star rated</span>
-            </p>
-            &nbsp;{" "}
-          </div>
+            <div className="pc-container3">
+              <img
+                style={{ height: "25px", width: "25px" }}
+                src="v.svg"
+                alt=""
+              />
+              {/* <Icon_info index={user_icon} /> */}
 
+              <p style={{ marginTop: "0.5%" }}>
+                {" "}
+                &nbsp;{user_verficationStatus}&nbsp; Verified
+              </p>
+            </div>
 
-          <div>
-          </div>
-            <p className="pc-container4" style={{ backgroundColor: "#F9EFFB" }}>
-              &nbsp;&nbsp;Featured Comment: Mr Khan says “Great
-              professional”&nbsp;&nbsp;
+            <div className="pc-container3" style={{ marginTop: "-0.5%" }}>
+              <img
+                style={{ height: "25px", width: "25px" }}
+                src="./Star.svg"
+                alt=""
+              />
+              &nbsp;
+              <p className="pp-container12" style={{ marginTop: "0.8%" }}>
+                {user_rating} <span> star rated</span>
+              </p>
+              &nbsp;{" "}
+            </div>
+
+            <div></div>
+            <p className="pc-container4">
+              &nbsp;
+              <img src="./cmnt.svg" alt="" />
+              &nbsp;
+              <span
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  color: "#555555",
+                }}
+              >
+                {user_reviews.length > 0 ? user_reviews[0].reviewerName : ""}
+                &nbsp;says&nbsp;{" "}
+                <span style={{ fontWeight: "bold" }}>
+                  "{user_reviews.length > 0 ? user_reviews[0].review : ""}"
+                </span>
+              </span>
+              &nbsp;&nbsp;
             </p>
           </div>
         </div>

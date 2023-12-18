@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon.png";
-import "./index.css";
+import "./Navbar.css";
 import { AuthContext } from "../../Providers/AuthProviders";
 import { useContext, useEffect, useState } from "react";
 import useAdmin from "../../hook/useAdmin";
@@ -58,8 +58,7 @@ const Navbar = () => {
     if (user) {
       fetchData(); // Fetch data initially
       console.log("acceptedAppointmentsCount: abcd", acceptedAppointmentsCount);
-console.log("isUser:", isUser);
-
+      console.log("isUser:", isUser);
 
       const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds (adjust as needed)
 
@@ -85,8 +84,8 @@ console.log("isUser:", isUser);
   // }
 
   return (
-    <div className="border border-b c2" style={{ height: "82px" }}>
-      <div className="navbar bg-base-100">
+    <div className="border border-b c2 nav-container" style={{ height: "82px" }}>
+      <div className="navbar bg-base-100 nav-container2">
         <div className="navbar">
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -332,5 +331,4 @@ console.log("isUser:", isUser);
     </div>
   );
 };
-// export const userData = user.email;
 export default Navbar;

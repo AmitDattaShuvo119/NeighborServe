@@ -194,6 +194,7 @@ const AppointmentDetails = () => {
   return (
     <div>
       <Navbar />{" "}
+      <br /><br /><br />
       {isAppointmentCanceled && (
         <div className="alert alert-success">
           <svg

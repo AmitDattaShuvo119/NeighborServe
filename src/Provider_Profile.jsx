@@ -139,8 +139,8 @@ function Provider_Profile() {
     axios
       .post(apiUrl2, newAppointment)
       .then((response) => {
-        // navigate(`/view_appointment/${searchString2}`);
-        alert("Service requested successfully!");
+        navigate(`/appointment_details/${searchString2}/${newAppointment.appointmentId}`);
+        setIsOpen(false);
         console.log(response.data);
       })
       .catch((error) => {
@@ -153,9 +153,38 @@ function Provider_Profile() {
     return selectedSlot && homeAddress && note;
   }
 
+  const shareId = () => {
+    const currentLink = window.location.href;
+  
+    // Create a temporary input element
+    const tempInput = document.createElement('input');
+    tempInput.value = currentLink;
+  
+    // Append the input element to the document
+    document.body.appendChild(tempInput);
+  
+    // Select the input element's content
+    tempInput.select();
+  
+    try {
+      // Execute the copy command using the modern approach
+      document.execCommand('copy');
+      // Provide feedback to the user (you can customize this part)
+      alert('Link copied to clipboard');
+    } catch (err) {
+      // Handle the error (e.g., by informing the user)
+      console.error('Unable to copy to clipboard', err);
+    } finally {
+      // Remove the temporary input element
+      document.body.removeChild(tempInput);
+    }
+  };
+  
+
   return (
     <div>
       <Navbar />
+      <br /><br /><br />
       {dataArray
         // .filter((person) => person.user_id === val)
         .map((person, personIndex) => (
@@ -288,6 +317,7 @@ function Provider_Profile() {
                     >
                       <button
                         style={{ marginLeft: "5%" }}
+                        onClick={shareId}
                         className="btn bg-blue-purple btn-sm text-white w-24 h-10"
                       >
                         Share

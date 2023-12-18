@@ -11,6 +11,7 @@ const Service_Result = () => {
   return (
     <div>
       <Navbar />
+      <br /><br /><br />
       <Outlet />
       <br />
       <div className="sr-container0">

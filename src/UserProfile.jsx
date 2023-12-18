@@ -120,6 +120,7 @@ const UserProfile = () => {
   return (
     <div>
       <Navbar />
+      <br /><br /><br />
       <br />
       <br />
       <div className="up-container1">

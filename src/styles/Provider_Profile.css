@@ -75,7 +75,7 @@ select option:disabled {
     top: 37%;
     transform: translateX(-50%);
     width: 380px;
-    height: 380px;
+    height: 420px;
     position: absolute;
     background-color: white;
     border: 1px solid #ccc;

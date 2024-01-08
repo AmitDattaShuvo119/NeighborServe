@@ -4,6 +4,7 @@ import { AuthContext } from "../../Providers/AuthProviders";
 import BarLoader from "react-spinners/BarLoader";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import "./ProfileComponent.css";
 
 function PersonList2({ searchString }) {
   const userId = localStorage.getItem("userID");
@@ -193,7 +194,7 @@ function PersonList2({ searchString }) {
               whiteSpace: "nowrap",
             }}
             onClick={recommendation}
-            className="btn btn-primary"
+            className="btn btn-primary smart-btn"
           >
             Smart Recommendation
           </button>

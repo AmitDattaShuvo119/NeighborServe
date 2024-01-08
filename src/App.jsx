@@ -14,12 +14,18 @@ import AboutUs from './Component/AboutUs/AboutUs';
 import Policy from './Component/Policy/Policy';
 import Chat_DB from './Component/Chat_DashBoard/Chat_DB';
 import Service_History from './Component/Service_History/Service_History';
+
+
+import PricingSection from './Component/Pricing/Pricing2';
+import CustomerSupportSection from './Component/CustomerSupportSection/CustomerSupportSection';
+import ChartSection from './Component/chartSection/chartSection';
+
 function App() {
   return (
 
     <>
      <Navbar></Navbar>
-     <HeroSection></HeroSection>
+      <HeroSection></HeroSection>
      <Category></Category>
      <OfferCard></OfferCard>
      <FeatureProvider></FeatureProvider>
@@ -29,6 +35,11 @@ function App() {
      <Service_History></Service_History>
      <Chat_DB></Chat_DB>
      <Footer></Footer>
+    
+     {/* <PricingSection></PricingSection> */}
+     <CustomerSupportSection></CustomerSupportSection>
+     <ChartSection></ChartSection>
+     <Footer></Footer> 
     </>
   )
 }

@@ -77,6 +77,7 @@ function Browse_service() {
   return (
     <div>
       <Navbar />
+      
       <Outlet />
       <div className="bs-container1" style={containerStyle}>
         <div className="bs-container2">Hire Professonal Service Providers</div>

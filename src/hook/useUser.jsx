@@ -16,7 +16,7 @@ const useUser = () => {
           const res = await axios.get(
             `http://localhost:5000/users/user/${user.email}`
           );
-
+          console.log( res.data.user);
           return res.data.user;
         }
 

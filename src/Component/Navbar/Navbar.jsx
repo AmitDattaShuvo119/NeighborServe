@@ -148,7 +148,7 @@ const Navbar = () => {
 
               <div className="indicator">
                 {/* <span className="indicator-item badge badge-secondary">new</span>  */}
-                <button className="btn join-item rounded-none">Search</button>
+                <button className="btn join-item rounded-none bg-primary text-white ">Search</button>
               </div>
             </div>
           </div>

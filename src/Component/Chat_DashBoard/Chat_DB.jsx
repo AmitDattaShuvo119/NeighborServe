@@ -240,7 +240,7 @@ const Chat_DB = () => {
   return (
     <>
       {/* <Navbar /> */}
-      <div className="xl:h-[20%] xl:w-[60%]  sm:h-[10%] sm:w-[60%] flex justify-center items-center ml-80 ">
+      <div className="xl:h-[10%] xl:w-[60%]  sm:h-[10%] sm:w-[60%] sm:text-xs flex justify-center items-center ml-80 ">
         {userId && (
           <div className="w-[25%] h-screen bg-violet-200 rounded-lg  overflow-y-auto">
             {userDetails.map((conversation, index) => (

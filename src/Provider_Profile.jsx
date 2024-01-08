@@ -894,7 +894,7 @@ function Provider_Profile() {
       <br />
       <br />
       <br />
-      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] sm:mb-[85%] md:mt-[-50%] md:w-[110%]">
+      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] md:mt-[-50%] md:w-[110%] sm:mb-[100%] sm:w-[180%] sm:mt-[-215%] sm:ml-[38%] h-[17%] ">
         {showChatDB && (
           <div className="chat-db-wrapper ">
             <Chat_DB />

@@ -8,6 +8,7 @@ import Footer from "./Component/Footer/Footer";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "./Providers/AuthProviders";
+import Chat_DB from "./Component/Chat_DashBoard/Chat_DB";
 // import { v4 as uuidv4 } from "uuid";
 
 function Provider_Profile() {
@@ -27,7 +28,20 @@ function Provider_Profile() {
   const toggleDiv = () => {
     setIsOpen(!isOpen);
   };
+  const {
+    currentConversation,
+    setCurrentConversation,
+    chat,
+    setChat,
+    messages,
+    setMessages,
+    convo,
+    setConvo,
+    showChatDB,
+    setShowChatDB,
+  
 
+  } = useContext(AuthContext);
   const apiUrl = `http://localhost:5000/providers/providersProfile?id=${searchString}`; // Replace with your API endpoint
 
   useEffect(() => {
@@ -40,7 +54,7 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
-
+  console.log("Data Array: ",dataArray);
   const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
 
   useEffect(() => {
@@ -53,7 +67,7 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
-
+// console.log("Data Array: ",dataArray2);
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -154,19 +168,7 @@ function Provider_Profile() {
     return selectedSlot && homeAddress && note;
   }
 
-  // console.log("Chat: ", chat);
-  // console.log("msg: ", messages);
 
-  const {
-    currentConversation,
-    setCurrentConversation,
-    chat,
-    setChat,
-    messages,
-    setMessages,
-    convo,
-    setConvo,
-  } = useContext(AuthContext);
   console.log("Chat: ", chat);
   console.log("msg: ", messages);
 
@@ -198,7 +200,7 @@ function Provider_Profile() {
     // console.log("ConversationId of FetchConversations", id);
     FetchConversations(searchString2);
   }, []);
-  // console.log("CONVO: ",convo);
+  console.log("CONVO: ",convo);
   useEffect(() => {
     const fetchChat = async () => {
       const res = await fetch(
@@ -215,6 +217,9 @@ function Provider_Profile() {
     };
     fetchChat();
   }, []);
+
+
+
   const FetchMessages = async (conversationId, receiver) => {
     try {
       const url = `http://localhost:5000/chatApp/message/${conversationId}?senderId=${searchString2}&&receiverId=${receiver?.id}`;
@@ -241,50 +246,12 @@ function Provider_Profile() {
     }
   };
 
-  // const createNewConversation = async (receiver) => {
-  //   try {
-  //     console.log("Receiver.", receiver);
-  //     console.log("ConversationId", convo?.conversationId);
-  //     if (convo?.conversationId) {
-  //       // Conversation has already been created, do not create again
-  //       console.log("Conversation already created.");
-  //       return;
-  //     }
-
-  //     const res = await fetch("http://localhost:5000/providers/conversations", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         senderId: searchString2, // Assuming userId is the sender's ID
-  //         receiverId: receiver.id,
-  //         conversationId: messages?.messages?.conversationId,
-  //       }),
-  //     });
-
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! Status: ${res.status}`);
-  //     }
-
-  //     const resultData = await res.json();
-  //     console.log("New Conversation Created:", resultData);
-
-  //     // Fetch messages for the new conversation
-  //     const conversationId = "new";
-  //     await FetchMessages(conversationId, receiver);
-
-  //     // Set conversationCreated to true to indicate that the conversation has been created
-  //     // setConversationCreated(true);
-  //   } catch (error) {
-  //     console.error("Error creating conversation:", error);
-  //   }
-  // };
-  // const {currentConversation,setCurrentConversation}=useContext(AuthContext);
+  
+  //Shows output but Duplicate Value not prevent///////////////This is the correct possible version////////////
   const createNewConversation = async (receiver) => {
     try {
       const conversationId = "new"; // Replace 'new' with the actual conversationId you are using
-
+      console.log("ConversationId:", conversationId);
       // Check if a conversation already exists with the same conversationId
       const existingConversation = convo.find((c) => c._id === conversationId);
 
@@ -308,7 +275,7 @@ function Provider_Profile() {
         },
         body: JSON.stringify({
           senderId: searchString2,
-          receiverId: receiver.id,
+          receiverId: searchString,
           conversationId: conversationId,
         }),
       });
@@ -332,32 +299,96 @@ function Provider_Profile() {
       console.error("Error creating or fetching conversation:", error);
     }
   };
-
+  
+ 
   // const createNewConversation = async (receiver) => {
   //   try {
-
-  //     // Check if a conversation already exists with the same conversationId
-  //     const existingConversation = convo.find((c) => c._id === conversationId);
-
+  //     console.log("Creating new conversation with receiver:", receiver);
+  
+  //     // Check if a conversation already exists with the same members
+  //     const existingConversation = convo.find(
+  //       (c) =>
+  //         c.members
+  //           .sort()
+  //           .toString() === [searchString2, receiver.id].sort().toString()
+  //     );
+  
+  //     console.log("Existing Conversation:", existingConversation);
+  
   //     if (existingConversation) {
-  //       // Conversation already exists, fetch messages for the existing conversation
+  //       // Conversation already exists, set it as the current conversation
+  //       setCurrentConversation(existingConversation);
+  
+  //       // Fetch messages for the existing conversation
   //       await FetchMessages(existingConversation._id, receiver);
-  //       console.log('Conversation already exists:', existingConversation);
   //       return;
   //     }
-
-  //     // console.log('Convo:', convo);
-  //     console.log('My_ConversationID:', conversationId);
+  
+  //     console.log("Conversation does not exist, creating a new one...");
+  
   //     // Conversation does not exist, create a new conversation
-  //     const res = await fetch('http://localhost:5000/providers/conversations', {
-  //       method: 'POST',
+  //     const res = await fetch("http://localhost:5000/chatApp/conversations", {
+  //       method: "POST",
   //       headers: {
-  //         'Content-Type': 'application/json',
+  //         "Content-Type": "application/json",
   //       },
   //       body: JSON.stringify({
   //         senderId: searchString2,
   //         receiverId: receiver.id,
-  //         conversationId: conversationId,
+  //       }),
+  //     });
+  
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
+  
+  //     const resultData = await res.json();
+  //     console.log("New Conversation Created:", resultData);
+  
+  //     // Fetch messages for the new conversation
+  //     await FetchMessages(resultData.insertedId, receiver);
+  
+  //     // Set the new conversation as the current conversation
+  //     setCurrentConversation(resultData.insertedId);
+  //   } catch (error) {
+  //     console.error("Error creating or fetching conversation:", error);
+  //   }
+  // };
+  ////Only for testing
+  let isChatClosing = false;
+
+  // // Function to close the chat
+  const closeChat = () => {
+    isChatClosing = true;
+    // Additional logic for closing the chat
+    // ...
+  };
+
+  // // Function to create or fetch a conversation
+  // const createNewConversation = async (receiver) => {
+  //   try {
+  //     // Check if a conversation already exists with the same receiver
+  //     const existingConversation = convo.find((c) =>
+  //       c.members.includes(searchString2, receiver.id)
+  //     );
+
+  //     if (existingConversation) {
+  //       // Conversation already exists, set it as the current conversation
+  //       setCurrentConversation(existingConversation);
+
+  //       // Fetch messages for the existing conversation
+  //       await FetchMessages(existingConversation._id, receiver);
+  //       return;
+  //     }
+
+  //     // Conversation does not exist, create a new conversation
+  //     const res = await fetch("http://localhost:5000/chatApp/conversations", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         members: [searchString2, receiver.id],
   //       }),
   //     });
 
@@ -366,22 +397,55 @@ function Provider_Profile() {
   //     }
 
   //     const resultData = await res.json();
-  //     console.log('New Conversation Created:', resultData);
+  //     console.log("New Conversation Created:", resultData);
 
   //     // Fetch messages for the new conversation
-  //     await FetchMessages('new', receiver);
+  //     await FetchMessages(resultData.insertedId, receiver);
 
-  //     // Update the list of conversations (convo state)
-  //     setConvo([
-  //       ...convo,
-  //       { _id: resultData.insertedId, members: [searchString2, receiver.id] },
-  //     ]);
-
+  //     // Set the new conversation as the current conversation
+  //     setCurrentConversation(resultData.insertedId);
   //   } catch (error) {
-  //     console.error('Error creating or fetching conversation:', error);
+  //     console.error("Error creating or fetching conversation:", error);
   //   }
   // };
 
+  const handleToggleChatDB = () => {
+    setShowChatDB(!showChatDB);
+  };
+
+  // const handleToggleChatDB = async (receiver) => {
+  //   try {
+  //     // Toggle the chat display
+  //     setShowChatDB(!showChatDB);
+  //     console.log("Receiver:", receiver);
+  
+  //     // Check if a conversation with the selected receiver already exists
+  //     const existingConversation = chat.find(
+  //       (c) => c?.user?.receiverId === receiver?.id
+  //     );
+  
+  //     console.log("Existing Conversation:", existingConversation);
+  
+  //     if (existingConversation) {
+  //       // Conversation already exists, set it as the current conversation
+  //       setCurrentConversation(existingConversation?.conversationId);
+  
+  //       // Fetch messages for the existing conversation
+  //       await FetchMessages(existingConversation?.conversationId, receiver);
+  //     } else {
+  //       // Conversation does not exist, create a new conversation
+  //       const newConversation = await createNewConversation(receiver);
+  
+  //       // Set the new conversation as the current conversation
+  //       setCurrentConversation(newConversation?.insertedId);
+  
+  //       // Fetch messages for the new conversation
+  //       await FetchMessages(newConversation?.insertedId, receiver);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error handling chat toggle:", error);
+  //   }
+  // };
   return (
     <div>
       <Navbar />
@@ -527,27 +591,39 @@ function Provider_Profile() {
                       >
                         Favorite
                       </button>
-                      <Link to={`/chats`}>
-                        <button
-                          style={{ marginLeft: "3%" }}
-                          className="btn bg-blue-purple btn-sm text-white w-24 h-10"
-                          onClick={async () => {
-                            const user = {
-                              name: person.user_fullname,
-                              email: person.user_email,
-                              id: person._id,
-                            };
-                            console.log(searchString2);
-                            if (searchString2) {
-                              await createNewConversation(user);
+                      {/* <Link to={`/chats`}> */}
+                      {chat.map((c) => {})}
+                      <button
+                        style={{ marginLeft: "3%" }}
+                        className="btn bg-blue-purple btn-sm text-white w-24 h-10"
+                        onClick={async () => {
+                        
+                          
+                          const user = {
+                            name: person.user_fullname,
+                            email: person.user_email,
+                            id: person._id,
+                          };
+                          
+                          handleToggleChatDB();
+                          console.log(searchString2);
+
+                          if (searchString2) {
+                            if (showChatDB) {
+                              // Call closeChat when closing the chat
+                              closeChat();
                             } else {
-                              console.log("Invalid conversationId:");
+                              // Call createNewConversation when opening the chat
+                              await createNewConversation(user);
                             }
-                          }}
-                        >
-                          Message
-                        </button>
-                      </Link>
+                          } else {
+                            console.log("Invalid conversationId:");
+                          }
+                        }}
+                      >
+                        {showChatDB ? "Close Chat" : "Message"}
+                      </button>
+                      ;{/* </Link> */}
                     </div>
                   </div>
                 </div>
@@ -782,21 +858,22 @@ function Provider_Profile() {
                     Users rated this service provider highly for
                     professionalism, responsiveness, and work quality.
                   </p>
-                  <div
-                    style={{
-                      maxHeight: "580px",
-                      width: "340px",
-                      borderTop: "4px solid #4C40ED",
-                      borderRadius: "0 0 5px 5px",
-                      marginTop: "3%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between", // Added this to space items vertically
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                    }}
-                  >
-                    <CommentList userReviews={person.user_reviews} />{" "}
-                    {/* <button
+                  {!showChatDB && (
+                    <div
+                      style={{
+                        maxHeight: "580px",
+                        width: "340px",
+                        borderTop: "4px solid #4C40ED",
+                        borderRadius: "0 0 5px 5px",
+                        marginTop: "3%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between", // Added this to space items vertically
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                      }}
+                    >
+                      <CommentList userReviews={person.user_reviews} />{" "}
+                      {/* <button
                       className="btn btn-sm w-28"
                       style={{
                         marginTop: "1%",
@@ -807,7 +884,8 @@ function Provider_Profile() {
                     >
                       Load more
                     </button> */}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -816,6 +894,13 @@ function Provider_Profile() {
       <br />
       <br />
       <br />
+      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] sm:mb-[85%] md:mt-[-50%] md:w-[110%]">
+        {showChatDB && (
+          <div className="chat-db-wrapper ">
+            <Chat_DB />
+          </div>
+        )}
+      </div>
       <Footer />
     </div>
   );

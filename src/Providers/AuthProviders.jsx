@@ -94,6 +94,8 @@ const AuthProviders = ({ children }) => {
   const [chat, setChat] = useState([]);
   const [messages, setMessages] = useState({});
   const [convo, setConvo] = useState([]);
+  const [showChatDB, setShowChatDB] = useState(false);
+  
   const authInfo = {
     user,
     createUser,
@@ -113,7 +115,10 @@ const AuthProviders = ({ children }) => {
     chat,
     messages ,
     convo,
-    setConvo// Include storedUserId in the context
+    setConvo,
+    showChatDB, 
+    setShowChatDB,
+                       //ude storedUserId in the context
   };
 
   return (

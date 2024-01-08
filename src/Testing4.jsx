@@ -1,38 +1,60 @@
 import React, { useState } from "react";
-import axios from "axios";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import "./NordDatePicker.css";
 
 const Testing4 = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
-  const handleImageChange = (event) => {
-    setSelectedImage(event.target.files[0]);
-  };
+  const CustomDatePickerInput = ({ onClick }) => (
+    <div style={{ display: "flex", alignItems: "center", cursor: "pointer" }} onClick={onClick}>
+      <img src="./calendar.svg" alt="" />
+      &nbsp; {selectedDate ? selectedDate.toLocaleDateString() : "Choose a date"}
+    </div>
+  );
 
-  const handleImageUpload = async () => {
-    const formData = new FormData();
-    formData.append("image", selectedImage);
+  const filterPastDates = (date) => {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set current date to midnight
 
-    const response = await axios.post(
-      "https://api.imgbb.com/1/upload?key=29ece6b8b3a3a74d990e6534dd31ece7",
-      formData
-    );
-
-    setImageUrl(response.data.data.url);
-    console.log("Uploaded Image URL:", response.data.data.url);
+    return date >= currentDate;
   };
 
   return (
     <div>
-      <h2>Image Uploader</h2>
-      <input type="file" onChange={handleImageChange} />
-      <button onClick={handleImageUpload}>Upload Image</button>
-      {imageUrl && (
-        <div>
-          <img src={imageUrl} alt="Uploaded Image" />
-          <p>Uploaded Image URL (copied to console): {imageUrl}</p>
-        </div>
-      )}
+      <div
+        style={{
+          width: "800px",
+          height: "500px",
+          marginRight: "auto",
+          marginLeft: "auto",
+        }}
+      >
+        <br />
+        <br />
+        <br />
+        <h1>Calendar</h1>
+        <br />
+        <br />
+        <br />
+        <DatePicker
+          selected={selectedDate}
+          onChange={(date) => setSelectedDate(date)}
+          dateFormat="MMMM d, yyyy"
+          placeholderText="Choose a date"
+          customInput={<CustomDatePickerInput />}
+          showPopperArrow={false}
+          popperPlacement="bottom-start"
+          popperModifiers={{
+            preventOverflow: {
+              enabled: true,
+              escapeWithReference: false,
+              boundariesElement: 'viewport',
+            },
+          }}
+          filterDate={filterPastDates}
+        />
+      </div>
     </div>
   );
 };

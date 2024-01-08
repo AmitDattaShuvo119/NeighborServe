@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import icon from "../../assets/icon.png";
-import "./index.css";
+import "./Navbar.css";
 import { AuthContext } from "../../Providers/AuthProviders";
 import { useContext, useEffect, useState } from "react";
 import useAdmin from "../../hook/useAdmin";
@@ -84,8 +84,8 @@ const Navbar = () => {
   // }
 
   return (
-    <div className="border border-b c2" style={{ height: "82px" }}>
-      <div className="navbar bg-base-100">
+    <div className="border border-b c2 nav-container" style={{ height: "82px" }}>
+      <div className="navbar bg-base-100 nav-container2">
         <div className="navbar">
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -352,5 +352,4 @@ const Navbar = () => {
     </div>
   );
 };
-// export const userData = user.email;
 export default Navbar;

@@ -6,6 +6,9 @@
 
 
 .up-container1 {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
     width: 1200px;
     height: 700px;
     box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
@@ -28,6 +31,25 @@
     border-radius: 10px;
 
 }
+
+@media (max-width: 480px) {
+    .up-container1{
+        background-color: white;
+        box-shadow: none;
+        height: 1500px;
+    }
+    .up-container2{
+        flex-direction: column;
+    }
+    .up-container4{
+        width: 200px;
+        
+    }
+    .up-container5{
+        margin-top: 20%;
+    }
+  }
+
 
 .up-container3 {
     border-radius: 15px;

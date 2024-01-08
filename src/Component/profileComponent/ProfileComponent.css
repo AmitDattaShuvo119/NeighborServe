@@ -89,8 +89,14 @@
 
 /* Media Query for Mobile Phones */
 @media (max-width: 480px) {
-
-
+    .smart-btn{
+        margin-left: 20px;
+    }
+    .pc-container1{
+        width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+    }
     .pc-container2 {
         margin-top: -10%;
     }

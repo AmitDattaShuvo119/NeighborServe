@@ -6,9 +6,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import CommentList from "./Component/Comment";
 import Footer from "./Component/Footer/Footer";
 import axios from "axios";
+import useAuth from "./hook/useAuth";
 // import { v4 as uuidv4 } from "uuid";
 
 function Provider_Profile() {
+  const { user} = useAuth();
   const navigate = useNavigate();
   const [selectedSlot, setSelectedSlot] = useState(""); // State to store selected time slot
   const [note, setNote] = useState("");
@@ -19,11 +21,29 @@ function Provider_Profile() {
   const [dataArray2, setDataArray2] = useState([]);
   const [dayStatus, setdayStatus] = useState("Today");
   const { searchString } = useParams();
+
   const [isOpen, setIsOpen] = useState(false);
   const availabilityRef = useRef(null);
   const searchString2 = localStorage.getItem("userID");
   const toggleDiv = () => {
     setIsOpen(!isOpen);
+  };
+
+  const [isFavorite, setIsFavorite] = useState(false);
+   const userEmail = user?.email;
+  const handleFavoriteClick = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/users/addFavoriteProvider", {
+        userEmail,
+        providerId: searchString,
+      });
+      if (response.status === 200) {
+
+        setIsFavorite(!isFavorite);
+      }
+    } catch (error) {
+      console.log("Error adding favorite provider");
+    }
   };
 
   const apiUrl = `http://localhost:5000/providers/providersProfile?id=${searchString}`; // Replace with your API endpoint
@@ -38,7 +58,6 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
-
 
   const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
 
@@ -292,11 +311,17 @@ function Provider_Profile() {
                       >
                         Share
                       </button>
-                      <button
+                      {/* <button
                         style={{ marginLeft: "3%" }}
                         className="btn bg-blue-purple btn-sm text-white w-24 h-10"
                       >
                         Favorite
+                      </button> */}
+                       
+                      <button style={{ marginLeft: "3%" }}  className="btn bg-blue-purple btn-sm text-white w-24 h-10"  onClick={handleFavoriteClick}>
+                        {isFavorite
+                          ? "Remove Favorites"
+                          : "Add Favorites"}
                       </button>
                       <button
                         style={{ marginLeft: "3%" }}

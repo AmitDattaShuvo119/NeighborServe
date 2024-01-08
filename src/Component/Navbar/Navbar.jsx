@@ -58,8 +58,7 @@ const Navbar = () => {
     if (user) {
       fetchData(); // Fetch data initially
       console.log("acceptedAppointmentsCount: abcd", acceptedAppointmentsCount);
-console.log("isUser:", isUser);
-
+      console.log("isUser:", isUser);
 
       const intervalId = setInterval(fetchData, 5000); // Fetch data every 5 seconds (adjust as needed)
 
@@ -136,13 +135,34 @@ console.log("isUser:", isUser);
               <img className="w-42 h-12" src={icon} alt="" />
             </Link>
           </div>
+          <div>
+            <div className="join ml-72">
+              <div>
+                <div>
+                  <input
+                    className="input input-bordered rounded-none join w-96"
+                    placeholder="Search"
+                  />
+                </div>
+              </div>
+
+              <div className="indicator">
+                {/* <span className="indicator-item badge badge-secondary">new</span>  */}
+                <button className="btn join-item rounded-none">Search</button>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div style={{ display: "flex", width: "900px" }}>
           <ul>
-            <Link to={"/browse_service"} className="text-xl c1 mr-7 s-text">
+            <Link
+              to={"/browse_service"}
+              className="lg:text-xl c1 lg:mr-7 ml-10 mr-2 s-text"
+            >
               Services
             </Link>
-            <Link to={"/"} className="text-xl c1 s-text">
+            <Link to={"/"} className="lg:text-xl c1 s-text">
               About us
             </Link>
 

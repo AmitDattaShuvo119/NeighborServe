@@ -25,7 +25,8 @@ export default {
         primary: "rgb(76, 64, 237)",
         "blue-purple": "#4C40ED",
         'primary': 'rgb(76, 64, 237)',
-        'secondary': 'rgb(244, 236, 255)'
+        'secondary': 'rgb(244, 236, 255)',
+        'background': 'rgb(242, 242, 242)'
       },
     },
   },

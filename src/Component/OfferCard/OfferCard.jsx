@@ -1,15 +1,28 @@
-import React from 'react';
-
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+const words = ["We", "offer", "14", "days", "free", "trail"];
 const OfferCard = () => {
-    return (
-        <div className='p-3 mx-2 lg:p-8'>
-            <div className='bg-primary text-xl text-white text-center p-2 w-[300px]mr-5 lg:w-[600px] h-52 lg:h-40 mx-auto rounded-md'>
-                    <h1 className='text-xl font-bold'>We offer 14 days free trail</h1>
-                    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Id fuga, eos quaerat aspernatur inventore esse cumque</p>
-                    <button className='bg-white rounded-sm text-black mt-4 p-2'>Try 14 days free trial </button>
-            </div>
-        </div>
-    );
+
+  return (
+    <section className="bg-gradient-to-r from-blue-500 to-purple-500 py-16 mx-2 text-white mb-4 mt-4">
+      <div className="container mx-auto text-center">
+        <h1 className="text-xl lg:text-3xl font-extrabold mb-4 text-white">
+          Welcome to Our Platform
+        </h1>
+        <h2 className=" text-2xl lg:text-4xl font-bold mb-4">
+          Start Your 14-Day Free Trial
+        </h2>
+        <p className="text-lg mb-8">
+          Explore all the premium features for free. No credit card required.
+        </p>
+
+        <button className="bg-white text-blue-500 font-bold py-2 px-6 rounded-full hover:bg-blue-700 hover:text-white transition duration-300">
+          Get Started
+        </button>
+      </div>
+    </section>
+  
+  );
 };
 
 export default OfferCard;

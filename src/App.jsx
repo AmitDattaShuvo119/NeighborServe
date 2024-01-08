@@ -11,17 +11,25 @@ import { HeroSection } from './Component/HeroSection/HeroSection'
 import Navbar from './Component/Navbar/Navbar'
 import OfferCard from './Component/OfferCard/OfferCard'
 
+
+import PricingSection from './Component/Pricing/Pricing2';
+import CustomerSupportSection from './Component/CustomerSupportSection/CustomerSupportSection';
+import ChartSection from './Component/chartSection/chartSection';
+
 function App() {
   return (
 
     <>
      <Navbar></Navbar>
-     <HeroSection></HeroSection>
+      <HeroSection></HeroSection>
      <Category></Category>
      <OfferCard></OfferCard>
      <FeatureProvider></FeatureProvider>
-     <CustomerSupport></CustomerSupport>
-     <Footer></Footer>
+    
+     {/* <PricingSection></PricingSection> */}
+     <CustomerSupportSection></CustomerSupportSection>
+     <ChartSection></ChartSection>
+     <Footer></Footer> 
     </>
   )
 }

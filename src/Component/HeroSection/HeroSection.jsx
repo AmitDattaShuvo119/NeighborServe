@@ -4,6 +4,7 @@ import photo from "../../assets/photo-1.jpeg";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import LocationBar from "./LocationBar";
+import { motion } from "framer-motion";
 
 export const HeroSection = () => {
   const serviceNames = [
@@ -44,43 +45,88 @@ export const HeroSection = () => {
     };
   }, [serviceIndex]);
 
+  const bounceVariants = {
+    initial: { y: 0 },
+    animate: { y: [20, 0, 20], transition: { yoyo: Infinity, duration: 18 } },
+  };
+  const bounceVariants1 = {
+    initial: { y: 0 },
+    animate: { y: [-20, 0, -20], transition: { yoyo: Infinity, duration: 18 } },
+  };
+  const bounceVariants2 = {
+    initial: { y: 0 },
+    animate: { y: [0, -20, 0], transition: { yoyo: Infinity, duration: 18 } },
+  };
+  const bounceVariants3 = {
+    initial: { x: 0 },
+    animate: { x: [-20, 20, -20, 0], transition: { yoyo: Infinity, duration: 18 } },
+  };
   return (
-    <div>
-      
+    <div >
       <div
         className="flex flex-col lg:flex-row lg:gap-2 "
         style={{ marginLeft: "5px", style: "red" }}
       >
         <div className="flex lg:w-1/2 lg:p-24 mt-7">
           <div>
-            <img
-              className="lg:w-96 lg:h-96  rounded-full"
-              src="./home-bg1.png"
-              alt=""
-            />
-            <img
-              className="lg:w-48 lg:h-48 lg:ml-24 rounded-full "
-              src="./home-bg2.png"
-              alt=""
-            />
+            <motion.div
+              variants={bounceVariants}
+              initial="initial"
+              animate="animate"
+            >
+              <img
+                className="lg:w-96 lg:h-96  rounded-full"
+                src="./home-bg1.png"
+                alt=""
+              />
+            </motion.div>
+            <motion.div
+              variants={bounceVariants1}
+              initial="initial"
+              animate="animate"
+            >
+              <img
+                className="lg:w-48 lg:h-48 lg:ml-24 rounded-full "
+                src="./home-bg2.png"
+                alt=""
+              />
+            </motion.div>
           </div>
 
           <div className="flex-col">
-            <img
-              className="lg:w-36 lg:h-36 rounded-full"
-              src="./home-bg3.png"
-              alt=""
-            />
-            <img
-              className="lg:w-48 lg:h-48  rounded-full"
-              src="./home-bg4.png"
-              alt=""
-            />
-            <img
-              className="lg:w-72 lg:h-72  rounded-full"
-              src="./home-bg5.png"
-              alt=""
-            />
+            <motion.div
+              variants={bounceVariants2}
+              initial="initial"
+              animate="animate"
+            >
+              <img
+                className="lg:w-36 lg:h-36 rounded-full"
+                src="./home-bg3.png"
+                alt=""
+              />
+            </motion.div>
+            <motion.div
+              variants={bounceVariants3}
+              initial="initial"
+              animate="animate"
+            >
+              <img
+                className="lg:w-48 lg:h-48  rounded-full"
+                src="./home-bg4.png"
+                alt=""
+              />
+            </motion.div>
+            <motion.div
+              variants={bounceVariants3}
+              initial="initial"
+              animate="animate"
+            >
+              <img
+                className="lg:w-72 lg:h-72  rounded-full"
+                src="./home-bg5.png"
+                alt=""
+              />
+            </motion.div>
           </div>
         </div>
         <div className="lg:w-1/2 mx-5 text-center my-7 lg:my-36 ">

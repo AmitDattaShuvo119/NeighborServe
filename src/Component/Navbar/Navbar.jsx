@@ -24,6 +24,7 @@ const Navbar = () => {
   console.log("Admin", isAdmin);
   console.log("provider", isProvider);
   console.log("user", isUser);
+  
   // console.log("email here: "+user.email);
   // console.log(user);
   const [user_img, setUser_img] = useState(null);

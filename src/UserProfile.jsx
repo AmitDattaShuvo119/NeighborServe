@@ -90,7 +90,7 @@ const UserProfile = () => {
     try {
       const response = await fetch(apiUrl);
       const data = await response.json();
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0 ) {
         setLocation(data[0].user_location);
         setUserEmail(data[0].user_email);
         setPhone(data[0].user_phone);

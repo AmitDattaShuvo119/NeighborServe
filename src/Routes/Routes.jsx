@@ -23,6 +23,10 @@ import Adminmanageprovider from "../Component/AdminDashboard/Adminmanageprovider
 import AdminVerifyProvider from "../Component/AdminDashboard/AdminVerifyProvider";
 import ReqAppointment from "../Component/ReqAppointment";
 import UserProfile from "../UserProfile";
+import AboutUs from  '../Component/AboutUs/AboutUs';
+import Policy from '../Component/Policy/Policy';
+import Service_History from "../Component/Service_History/Service_History";
+import Chat_DB from "../Component/Chat_DashBoard/Chat_DB";
 import Testing4 from "../Testing4";
 
 
@@ -90,6 +94,22 @@ export const router = createBrowserRouter([
   {
     path: "/service",
     element: <ProviderLogin></ProviderLogin>,
+  },
+  {
+    path: "/about",
+    element: <AboutUs></AboutUs>,
+  },
+  {
+    path: "/Service_History",
+    element: <Service_History></Service_History>,
+  },
+  {
+    path: "/chats",
+    element: <Chat_DB></Chat_DB>,
+  },
+  {
+    path: "/policy",
+    element: <Policy></Policy>,
   },
   {
     path: "/users/provider/:type",

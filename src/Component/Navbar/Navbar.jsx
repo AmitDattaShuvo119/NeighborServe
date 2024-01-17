@@ -163,7 +163,8 @@ const Navbar = () => {
             >
               Services
             </Link>
-            <Link to={"/"} className="lg:text-xl c1 s-text">
+            {/* <Link to={"/About"} className="text-xl c1 s-text"> */}
+            <Link to={"/About"} className="lg:text-xl c1 s-text">
               About us
             </Link>
 
@@ -331,6 +332,11 @@ const Navbar = () => {
                               Log In
                             </Link>
                           )}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={"/chats"} className="text-sm ">
+                          Message
                         </Link>
                       </li>
                     </ul>

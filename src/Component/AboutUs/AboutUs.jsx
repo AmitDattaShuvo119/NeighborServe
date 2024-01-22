@@ -8,7 +8,7 @@ const AboutUs = () => {
     <>
            <div>
         <Navbar/>
-        <div className='mr-55px'>
+        <div className='mr-55px mt-[12%] lg:mt-[10%] sm:mt-[16%] '>
    <h1 className='text-start text-lg text-black underline  decoration-primary '><strong>About Us</strong> </h1>
 
     </div>

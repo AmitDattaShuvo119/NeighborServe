@@ -7,7 +7,7 @@ const Policy = () => {
            <div>
         <Navbar/>
        </div>
-    <div className='mr-55px'>
+       <div className='mr-55px mt-[12%] lg:mt-[10%] sm:mt-[16%] '>
    <h1 className='text-start text-lg text-black underline-offset-4'><strong>Privacy terms and Condition</strong> </h1>
 
     </div>

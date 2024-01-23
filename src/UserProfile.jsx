@@ -25,6 +25,8 @@ const UserProfile = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [buttonText, setButtonText] = useState("Submit now");
 
+  
+
   const editProfile = () => {
     setButtonText("Submit now");
     setEp(true);
@@ -88,7 +90,7 @@ const UserProfile = () => {
     try {
       const response = await fetch(apiUrl);
       const data = await response.json();
-      if (Array.isArray(data) && data.length > 0 && data[0].user_location) {
+      if (Array.isArray(data) && data.length > 0 ) {
         setLocation(data[0].user_location);
         setUserEmail(data[0].user_email);
         setPhone(data[0].user_phone);

@@ -6,6 +6,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import CommentList from "./Component/Comment";
 import Footer from "./Component/Footer/Footer";
 import axios from "axios";
+import { useContext } from "react";
+import { AuthContext } from "./Providers/AuthProviders";
+import Chat_DB from "./Component/Chat_DashBoard/Chat_DB";
 import useAuth from "./hook/useAuth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -33,7 +36,20 @@ function Provider_Profile() {
   const toggleDiv = () => {
     setIsOpen(!isOpen);
   };
+  const {
+    currentConversation,
+    setCurrentConversation,
+    chat,
+    setChat,
+    messages,
+    setMessages,
+    convo,
+    setConvo,
+    showChatDB,
+    setShowChatDB,
+  
 
+  } = useContext(AuthContext);
   const [isFavorite, setIsFavorite] = useState(false);
    const userEmail = user?.email;
   const handleFavoriteClick = async () => {
@@ -63,6 +79,7 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
+  console.log("Data Array: ",dataArray);
 
   const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
 
@@ -76,7 +93,7 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
-
+// console.log("Data Array: ",dataArray2);
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -213,6 +230,201 @@ function Provider_Profile() {
     return selectedSlot && homeAddress && note;
   }
 
+
+
+  console.log("Chat: ", chat);
+  console.log("msg: ", messages);
+
+  // const [convo, setConvo] = useState([]);
+  const FetchConversations = async (id) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/chatApp/conversations/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Make sure to await the result of res.json()
+      const resultData = await res.json();
+
+      console.log("Response Data:", resultData); // Log the response data
+      setConvo(resultData);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      // Handle the error as needed, e.g., set an error state
+    }
+  };
+  useEffect(() => {
+    // const id = messages?.conversationId;
+    // console.log("ConversationId of FetchConversations", id);
+    FetchConversations(searchString2);
+  }, []);
+  console.log("CONVO: ",convo);
+  useEffect(() => {
+    const fetchChat = async () => {
+      const res = await fetch(
+        `http://localhost:5000/chatApp/conversations/${searchString2}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const result = await res.json();
+      setChat(result);
+    };
+    fetchChat();
+  }, []);
+
+
+
+  const FetchMessages = async (conversationId, receiver) => {
+    try {
+      const url = `http://localhost:5000/chatApp/message/${conversationId}?senderId=${searchString2}&&receiverId=${receiver?.id}`;
+      console.log("Fetching from URL:", url);
+
+      const res = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const resultData = await res.json();
+
+      setMessages({ messages: resultData, receiver, conversationId });
+
+      console.log("Fetched Messages:", resultData);
+    } catch (error) {
+      console.error("Error occurred:", error);
+    }
+  };
+
+  
+  //Shows output but Duplicate Value not prevent///////////////This is the correct possible version////////////
+  const createNewConversation = async (receiver) => {
+    try {
+      const conversationId = "new"; // Replace 'new' with the actual conversationId you are using
+      console.log("ConversationId:", conversationId);
+      // Check if a conversation already exists with the same conversationId
+      const existingConversation = convo.find((c) => c._id === conversationId);
+
+      if (existingConversation) {
+        // Conversation already exists, set it as the current conversation
+        setCurrentConversation(resultData.insertedId);
+
+        // Fetch messages for the new conversation
+        const conversationId = resultData.insertedId;
+        await FetchMessages(conversationId, receiver);
+        return;
+      }
+
+      console.log("Convo:", convo);
+
+      // Conversation does not exist, create a new conversation
+      const res = await fetch("http://localhost:5000/chatApp/conversations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          senderId: searchString2,
+          receiverId: searchString,
+          conversationId: conversationId,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! Status: ${res.status}`);
+      }
+
+      const resultData = await res.json();
+      console.log("New Conversation Created:", resultData);
+
+      // Fetch messages for the new conversation
+      await FetchMessages(conversationId, receiver);
+
+      // Set the new conversation as the current conversation
+      setCurrentConversation({
+        _id: resultData.insertedId,
+        members: [searchString2, receiver.id],
+      });
+    } catch (error) {
+      console.error("Error creating or fetching conversation:", error);
+    }
+  };
+  
+ 
+
+  let isChatClosing = false;
+
+  // // Function to close the chat
+  const closeChat = () => {
+    isChatClosing = true;
+    // Additional logic for closing the chat
+    // ...
+  };
+
+  // // Function to create or fetch a conversation
+  // const createNewConversation = async (receiver) => {
+  //   try {
+  //     // Check if a conversation already exists with the same receiver
+  //     const existingConversation = convo.find((c) =>
+  //       c.members.includes(searchString2, receiver.id)
+  //     );
+
+  //     if (existingConversation) {
+  //       // Conversation already exists, set it as the current conversation
+  //       setCurrentConversation(existingConversation);
+
+  //       // Fetch messages for the existing conversation
+  //       await FetchMessages(existingConversation._id, receiver);
+  //       return;
+  //     }
+
+  //     // Conversation does not exist, create a new conversation
+  //     const res = await fetch("http://localhost:5000/chatApp/conversations", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         members: [searchString2, receiver.id],
+  //       }),
+  //     });
+
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
+
+  //     const resultData = await res.json();
+  //     console.log("New Conversation Created:", resultData);
+
+  //     // Fetch messages for the new conversation
+  //     await FetchMessages(resultData.insertedId, receiver);
+
+  //     // Set the new conversation as the current conversation
+  //     setCurrentConversation(resultData.insertedId);
+  //   } catch (error) {
+  //     console.error("Error creating or fetching conversation:", error);
+  //   }
+  // };
+
+  const handleToggleChatDB = () => {
+    setShowChatDB(!showChatDB);
+  };
+
+
+
   const shareId = () => {
     const currentLink = window.location.href;
 
@@ -240,6 +452,7 @@ function Provider_Profile() {
     }
   };
 
+
   return (
     <div>
       <Navbar />
@@ -249,7 +462,7 @@ function Provider_Profile() {
       {dataArray
         // .filter((person) => person.user_id === val)
         .map((person, personIndex) => (
-          <div className="pp-container0">
+          <div className="pp-container0" key={personIndex}>
             <div style={{ display: "flex", height: "50px" }}>
               <img
                 src="back.png"
@@ -395,12 +608,39 @@ function Provider_Profile() {
                           ? "Remove Favorites"
                           : "Add Favorites"}
                       </button>
+                      {/* <Link to={`/chats`}> */}
+                      {chat.map((c) => {})}
                       <button
                         style={{ marginLeft: "3%" }}
                         className="btn bg-blue-purple btn-sm text-white w-24 h-10"
+                        onClick={async () => {
+                        
+                          
+                          const user = {
+                            name: person.user_fullname,
+                            email: person.user_email,
+                            id: person._id,
+                          };
+                          
+                          handleToggleChatDB();
+                          console.log(searchString2);
+
+                          if (searchString2) {
+                            if (showChatDB) {
+                              // Call closeChat when closing the chat
+                              closeChat();
+                            } else {
+                              // Call createNewConversation when opening the chat
+                              await createNewConversation(user);
+                            }
+                          } else {
+                            console.log("Invalid conversationId:");
+                          }
+                        }}
                       >
-                        Message
+                        {showChatDB ? "Close Chat" : "Message"}
                       </button>
+                      ;{/* </Link> */}
                     </div>
                   </div>
                 </div>
@@ -656,21 +896,22 @@ function Provider_Profile() {
                     Users rated this service provider highly for
                     professionalism, responsiveness, and work quality.
                   </p>
-                  <div
-                    style={{
-                      maxHeight: "580px",
-                      width: "340px",
-                      borderTop: "4px solid #4C40ED",
-                      borderRadius: "0 0 5px 5px",
-                      marginTop: "3%",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between", // Added this to space items vertically
-                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                    }}
-                  >
-                    <CommentList userReviews={person.user_reviews} />{" "}
-                    {/* <button
+                  {!showChatDB && (
+                    <div
+                      style={{
+                        maxHeight: "580px",
+                        width: "340px",
+                        borderTop: "4px solid #4C40ED",
+                        borderRadius: "0 0 5px 5px",
+                        marginTop: "3%",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between", // Added this to space items vertically
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                      }}
+                    >
+                      <CommentList userReviews={person.user_reviews} />{" "}
+                      {/* <button
                       className="btn btn-sm w-28"
                       style={{
                         marginTop: "1%",
@@ -681,7 +922,8 @@ function Provider_Profile() {
                     >
                       Load more
                     </button> */}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -690,6 +932,14 @@ function Provider_Profile() {
       <br />
       <br />
       <br />
+      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] md:mt-[-50%] md:w-[110%] sm:mb-[100%] sm:w-[180%] sm:mt-[-215%] sm:ml-[38%] h-[17%] message1 message2   ">
+        {showChatDB && (
+          <div className="chat-db-wrapper ">
+            <Chat_DB />
+          </div>
+        )}
+      </div> 
+      
       <Footer />
     </div>
   );

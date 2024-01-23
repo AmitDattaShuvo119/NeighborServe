@@ -24,9 +24,10 @@ const Navbar = ({ setResults, results }) => {
   const [query, setQuery] = useState("");
   console.log("query", query);
 
-  // console.log("Admin", isAdmin);
-  // console.log("provider", isProvider);
-  // console.log("user", isUser);
+
+  console.log("Admin", isAdmin);
+  console.log("provider", isProvider);
+  console.log("user", isUser);
   // console.log("email here: "+user.email);
   // console.log(user);
   const [user_img, setUser_img] = useState(null);
@@ -200,7 +201,8 @@ const Navbar = ({ setResults, results }) => {
             >
               Services
             </Link>
-            <Link to={"/"} className="lg:text-xl c1 s-text">
+            {/* <Link to={"/About"} className="text-xl c1 s-text"> */}
+            <Link to={"/About"} className="lg:text-xl c1 s-text">
               About us
             </Link>
 
@@ -368,6 +370,11 @@ const Navbar = ({ setResults, results }) => {
                               Log In
                             </Link>
                           )}
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to={"/chats"} className="text-sm ">
+                          Message
                         </Link>
                       </li>
                     </ul>

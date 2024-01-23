@@ -2,6 +2,7 @@ import React, { useState } from "react";
 // import Login from './Login/Login';
 // import Registration from './Registration';
 // import Service from './Service';
+
 import "./App.css";
 import Category from "./Component/Category/Category";
 import CustomerSupport from "./Component/CustomerSupport/CustomerSupport";
@@ -12,6 +13,11 @@ import Navbar from "./Component/Navbar/Navbar";
 import OfferCard from "./Component/OfferCard/OfferCard";
 import CustomerSupportSection from "./Component/CustomerSupportSection/CustomerSupportSection";
 import ChartSection from "./Component/chartSection/chartSection";
+import AboutUs from './Component/AboutUs/AboutUs';
+import Policy from './Component/Policy/Policy';
+import Chat_DB from './Component/Chat_DashBoard/Chat_DB';
+import Service_History from './Component/Service_History/Service_History';
+
 
 import SearchResult from "./Component/SearchResult";
 
@@ -21,9 +27,10 @@ function App() {
   console.log("app result",results)
   return (
     <>
+
       <Navbar results={results} setResults={setResults}></Navbar> 
       <SearchResult  results={results}></SearchResult>
-      
+ 
     
      
       <HeroSection></HeroSection>

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 const Adminmanageprovider = () => {
   const { user } = useAuth()
   const [allprovider, setAllProvider] = useState([])
-  const url = "http://localhost:5000/users/allprovider"
+  const url = "https://neighbor-serve-server.vercel.app/users/allprovider"
 
   useEffect(() => {
     fetch(url)

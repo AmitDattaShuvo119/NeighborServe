@@ -6,7 +6,7 @@ const AdminManageuser = () => {
 
 const {user} = useAuth();
     const [alluser, setAllUser] = useState([]);
-    const url ="http://localhost:5000/users/alluser"
+    const url ="https://neighbor-serve-server.vercel.app/users/alluser"
 
     useEffect(() => {
 

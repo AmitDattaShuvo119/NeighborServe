@@ -6,7 +6,21 @@ import Footer from "../Footer/Footer";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
 import { AuthContext } from "../../Providers/AuthProviders";
+import PhoneAuth from "../PhoneAuth";
+import   firebase from 'firebase/compat/app';
+import { initializeApp } from "firebase/app"
+import { onAuthStateChanged } from 'firebase/auth';
 const ProviderLogin = () => {
+  
+const firebaseConfig = {
+  apiKey: "AIzaSyC7chfOPb7kE6CjPGKpKcvRE_YnjYK3l5Y",
+  authDomain: "neighborserve-c3db4.firebaseapp.com",
+  projectId: "neighborserve-c3db4",
+  storageBucket: "neighborserve-c3db4.appspot.com",
+  messagingSenderId: "534526095463",
+  appId: "1:534526095463:web:27b233d3149a387ae7e4c2"
+};
+firebase.initializeApp(firebaseConfig)  
   const {
     register,
     handleSubmit,
@@ -21,7 +35,15 @@ const ProviderLogin = () => {
 
   const from = location.state?.form?.pathname || "/";
   const navigate = useNavigate();
-
+  
+  const handlePhoneSignIn = () =>{
+    useEffect (()=>{
+        const unRegisterd = onAuthStateChanged(firebase.auth(),(currentUser)=>{
+            console.log(currentUser)
+            setPuser(currentUser);
+        })
+    },[])
+}
   const handlesignup = (data) => {
     createUser(data.email, data.password).then((result) => {
       const loggedUser = result.user;
@@ -221,6 +243,7 @@ const ProviderLogin = () => {
                 >
                   Sign Up
                 </button>
+               
               </div>
             </div>
 
@@ -231,15 +254,15 @@ const ProviderLogin = () => {
                     display: "flex",
                     color: "white",
                     justifyContent: "center",
-                    marginTop: "170px",
+                    marginTop: "30px",
                     fontSize: "20px",
                     fontWeight: "bold",
                   }}
                 >
-                  Already have an account?
+                 LogIn With Phone Number
                 </p>
 
-                <button
+                {/* <button
                   className="service-signin-btn"
                   style={{
                     display: "flex",
@@ -256,7 +279,8 @@ const ProviderLogin = () => {
                   }}
                 >
                   Sign In
-                </button>
+                </button> */}
+                 <PhoneAuth auth={firebase.auth()}></PhoneAuth>
               </div>
             </div>
           </div>

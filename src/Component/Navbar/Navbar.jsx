@@ -7,8 +7,9 @@ import useAdmin from "../../hook/useAdmin";
 
 import useUser from "../../hook/useUser";
 import useProvider from "../../hook/useProvider";
+import axios from "axios";
 
-const Navbar = () => {
+const Navbar = ({ setResults, results }) => {
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
   // const [isHovering, setIsHovering] = useState(false)
@@ -20,16 +21,18 @@ const Navbar = () => {
   const [pendingAppointmentsCount, setPendingAppointmentsCount] = useState(0);
   const [acceptedAppointmentsCount, setAcceptedAppointmentsCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
+  const [query, setQuery] = useState("");
+  console.log("query", query);
+
 
   console.log("Admin", isAdmin);
   console.log("provider", isProvider);
   console.log("user", isUser);
-  
   // console.log("email here: "+user.email);
   // console.log(user);
   const [user_img, setUser_img] = useState(null);
   const apiUrl = user
-    ? `http://localhost:5000/providers/getId/${user.email}`
+    ? `https://neighbor-serve-server.vercel.app/providers/getId/${user.email}`
     : null;
 
   const fetchData = async () => {
@@ -50,6 +53,31 @@ const Navbar = () => {
       setPendingAppointmentsCount(count);
       setAcceptedAppointmentsCount(count2);
       setTotalCount(count + count2);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    handleSearch();
+  }, [query]);
+
+  const handleSearch = async () => {
+    try {
+      // const response = await axios.get(`http://localhost:5000/users/search?q=${query}`);
+      // setResults(response);
+      if (query.trim() !== "") {
+        const response = await fetch(
+          `https://neighbor-serve-server.vercel.app/users/search?q=${query}`
+        );
+        const data = await response.json();
+        console.log(data);
+        setResults(data);
+      } else {
+        setResults([]);
+      }
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -85,7 +113,10 @@ const Navbar = () => {
   // }
 
   return (
-    <div className="border border-b c2 nav-container" style={{ height: "82px" }}>
+    <div
+      className="border border-b c2 nav-container"
+      style={{ height: "82px" }}
+    >
       <div className="navbar bg-base-100 nav-container2">
         <div className="navbar">
           <div className="dropdown">
@@ -143,13 +174,20 @@ const Navbar = () => {
                   <input
                     className="input input-bordered rounded-none join w-96"
                     placeholder="Search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
                   />
                 </div>
               </div>
 
               <div className="indicator">
                 {/* <span className="indicator-item badge badge-secondary">new</span>  */}
-                <button className="btn join-item rounded-none bg-primary text-white ">Search</button>
+                <button
+                  onClick={handleSearch}
+                  className="btn join-item rounded-none bg-primary text-white "
+                >
+                  Search
+                </button>
               </div>
             </div>
           </div>

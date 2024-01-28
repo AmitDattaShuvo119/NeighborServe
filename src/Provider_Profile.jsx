@@ -13,7 +13,6 @@ import useAuth from "./hook/useAuth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./NordDatePicker.css";
-// import { v4 as uuidv4 } from "uuid";
 
 function Provider_Profile() {
   const { user} = useAuth();
@@ -50,25 +49,38 @@ function Provider_Profile() {
   
 
   } = useContext(AuthContext);
-  const [isFavorite, setIsFavorite] = useState(false);
-   const userEmail = user?.email;
-  const handleFavoriteClick = async () => {
-    try {
-      const response = await axios.post("http://localhost:5000/users/addFavoriteProvider", {
-        userEmail,
-        providerId: searchString,
-      });
-      if (response.status === 200) {
-
-        setIsFavorite(!isFavorite);
-      }
-    } catch (error) {
-      console.log("Error adding favorite provider");
-    }
-  };
-
   const apiUrl = `http://localhost:5000/providers/providersProfile?id=${searchString}`; // Replace with your API endpoint
+  const [isFavorite, setIsFavorite] = useState(false);
+  const userEmail = user?.email;
+ const handleFavoriteClick = async () => {
+   try {
+     const response = await axios.post("http://localhost:5000/users/addFavoriteProvider", {
+       userEmail,
+       providerId: searchString,
+     });
+     if (response.status === 200) {
 
+       setIsFavorite(!isFavorite);
+     }
+   } catch (error) {
+     console.log("Error adding favorite provider");
+   }
+ };
+
+
+ useEffect(() => {
+   fetch(apiUrl)
+     .then((response) => response.json())
+     .then((data) => {
+       setDataArray(data);
+     })
+     .catch((error) => {
+       console.error("Error fetching data:", error);
+     });
+ }, []);
+ console.log("Data Array: ",dataArray);
+
+ const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
   useEffect(() => {
     fetch(apiUrl)
       .then((response) => response.json())
@@ -80,8 +92,7 @@ function Provider_Profile() {
       });
   }, []);
   console.log("Data Array: ",dataArray);
-
-  const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
+ 
 
   useEffect(() => {
     fetch(apiUrl2)
@@ -231,7 +242,6 @@ function Provider_Profile() {
   }
 
 
-
   console.log("Chat: ", chat);
   console.log("msg: ", messages);
 
@@ -364,7 +374,60 @@ function Provider_Profile() {
   };
   
  
-
+  // const createNewConversation = async (receiver) => {
+  //   try {
+  //     console.log("Creating new conversation with receiver:", receiver);
+  
+  //     // Check if a conversation already exists with the same members
+  //     const existingConversation = convo.find(
+  //       (c) =>
+  //         c.members
+  //           .sort()
+  //           .toString() === [searchString2, receiver.id].sort().toString()
+  //     );
+  
+  //     console.log("Existing Conversation:", existingConversation);
+  
+  //     if (existingConversation) {
+  //       // Conversation already exists, set it as the current conversation
+  //       setCurrentConversation(existingConversation);
+  
+  //       // Fetch messages for the existing conversation
+  //       await FetchMessages(existingConversation._id, receiver);
+  //       return;
+  //     }
+  
+  //     console.log("Conversation does not exist, creating a new one...");
+  
+  //     // Conversation does not exist, create a new conversation
+  //     const res = await fetch("http://localhost:5000/chatApp/conversations", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         senderId: searchString2,
+  //         receiverId: receiver.id,
+  //       }),
+  //     });
+  
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! Status: ${res.status}`);
+  //     }
+  
+  //     const resultData = await res.json();
+  //     console.log("New Conversation Created:", resultData);
+  
+  //     // Fetch messages for the new conversation
+  //     await FetchMessages(resultData.insertedId, receiver);
+  
+  //     // Set the new conversation as the current conversation
+  //     setCurrentConversation(resultData.insertedId);
+  //   } catch (error) {
+  //     console.error("Error creating or fetching conversation:", error);
+  //   }
+  // };
+  ////Only for testing
   let isChatClosing = false;
 
   // // Function to close the chat
@@ -423,6 +486,41 @@ function Provider_Profile() {
     setShowChatDB(!showChatDB);
   };
 
+  // const handleToggleChatDB = async (receiver) => {
+  //   try {
+  //     // Toggle the chat display
+  //     setShowChatDB(!showChatDB);
+  //     console.log("Receiver:", receiver);
+  
+  //     // Check if a conversation with the selected receiver already exists
+  //     const existingConversation = chat.find(
+  //       (c) => c?.user?.receiverId === receiver?.id
+  //     );
+  
+  //     console.log("Existing Conversation:", existingConversation);
+  
+  //     if (existingConversation) {
+  //       // Conversation already exists, set it as the current conversation
+  //       setCurrentConversation(existingConversation?.conversationId);
+  
+  //       // Fetch messages for the existing conversation
+  //       await FetchMessages(existingConversation?.conversationId, receiver);
+  //     } else {
+  //       // Conversation does not exist, create a new conversation
+  //       const newConversation = await createNewConversation(receiver);
+  
+  //       // Set the new conversation as the current conversation
+  //       setCurrentConversation(newConversation?.insertedId);
+  
+  //       // Fetch messages for the new conversation
+  //       await FetchMessages(newConversation?.insertedId, receiver);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error handling chat toggle:", error);
+  //   }
+  // };
+  
+
 
 
   const shareId = () => {
@@ -451,8 +549,6 @@ function Provider_Profile() {
       document.body.removeChild(tempInput);
     }
   };
-
-
   return (
     <div>
       <Navbar />
@@ -938,10 +1034,12 @@ function Provider_Profile() {
             <Chat_DB />
           </div>
         )}
-      </div> 
+      </div>
+     
       
       <Footer />
     </div>
   );
-}
+
+        }
 export default Provider_Profile;

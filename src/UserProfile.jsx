@@ -25,8 +25,6 @@ const UserProfile = () => {
   const [imageUrl, setImageUrl] = useState(null);
   const [buttonText, setButtonText] = useState("Submit now");
 
-  
-
   const editProfile = () => {
     setButtonText("Submit now");
     setEp(true);

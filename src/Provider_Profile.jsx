@@ -9,7 +9,10 @@ import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "./Providers/AuthProviders";
 import Chat_DB from "./Component/Chat_DashBoard/Chat_DB";
-// import { v4 as uuidv4 } from "uuid";
+import useAuth from "./hook/useAuth";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./NordDatePicker.css";
 
 function Provider_Profile() {
   const { user} = useAuth();
@@ -47,7 +50,37 @@ function Provider_Profile() {
 
   } = useContext(AuthContext);
   const apiUrl = `http://localhost:5000/providers/providersProfile?id=${searchString}`; // Replace with your API endpoint
+  const [isFavorite, setIsFavorite] = useState(false);
+  const userEmail = user?.email;
+ const handleFavoriteClick = async () => {
+   try {
+     const response = await axios.post("http://localhost:5000/users/addFavoriteProvider", {
+       userEmail,
+       providerId: searchString,
+     });
+     if (response.status === 200) {
 
+       setIsFavorite(!isFavorite);
+     }
+   } catch (error) {
+     console.log("Error adding favorite provider");
+   }
+ };
+
+
+ useEffect(() => {
+   fetch(apiUrl)
+     .then((response) => response.json())
+     .then((data) => {
+       setDataArray(data);
+     })
+     .catch((error) => {
+       console.error("Error fetching data:", error);
+     });
+ }, []);
+ console.log("Data Array: ",dataArray);
+
+ const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
   useEffect(() => {
     fetch(apiUrl)
       .then((response) => response.json())
@@ -59,7 +92,7 @@ function Provider_Profile() {
       });
   }, []);
   console.log("Data Array: ",dataArray);
-  const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
+ 
 
   useEffect(() => {
     fetch(apiUrl2)
@@ -486,7 +519,36 @@ function Provider_Profile() {
   //     console.error("Error handling chat toggle:", error);
   //   }
   // };
-}
+  
+
+
+
+  const shareId = () => {
+    const currentLink = window.location.href;
+
+    // Create a temporary input element
+    const tempInput = document.createElement("input");
+    tempInput.value = currentLink;
+
+    // Append the input element to the document
+    document.body.appendChild(tempInput);
+
+    // Select the input element's content
+    tempInput.select();
+
+    try {
+      // Execute the copy command using the modern approach
+      document.execCommand("copy");
+      // Provide feedback to the user (you can customize this part)
+      alert("Link copied to clipboard");
+    } catch (err) {
+      // Handle the error (e.g., by informing the user)
+      console.error("Unable to copy to clipboard", err);
+    } finally {
+      // Remove the temporary input element
+      document.body.removeChild(tempInput);
+    }
+  };
   return (
     <div>
       <Navbar />
@@ -978,4 +1040,6 @@ function Provider_Profile() {
       <Footer />
     </div>
   );
+
+        }
 export default Provider_Profile;

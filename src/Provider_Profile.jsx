@@ -12,6 +12,7 @@ import Chat_DB from "./Component/Chat_DashBoard/Chat_DB";
 // import { v4 as uuidv4 } from "uuid";
 
 function Provider_Profile() {
+  const { user} = useAuth();
   const navigate = useNavigate();
   const [selectedSlot, setSelectedSlot] = useState(""); // State to store selected time slot
   const [note, setNote] = useState("");
@@ -22,9 +23,12 @@ function Provider_Profile() {
   const [dataArray2, setDataArray2] = useState([]);
   const [dayStatus, setdayStatus] = useState("Today");
   const { searchString } = useParams();
+
   const [isOpen, setIsOpen] = useState(false);
   const availabilityRef = useRef(null);
   const searchString2 = localStorage.getItem("userID");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate2, setSelectedDate2] = useState(null);
   const toggleDiv = () => {
     setIsOpen(!isOpen);
   };
@@ -84,18 +88,21 @@ function Provider_Profile() {
     };
   }, []);
 
-  const apiUrl1 = `http://localhost:5000/providers/appointment?id=${searchString}`; // Replace with your API endpoint
+  const apiUrl1 = `http://localhost:5000/providers/appointment/${searchString}/${selectedDate2}`; // Replace with your API endpoint
 
   useEffect(() => {
+    if (selectedDate2) {
+     
     fetch(apiUrl1)
-      .then((response) => response.json())
-      .then((data) => {
-        setAvailableSlots(data.availableTimeSlots);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [apiUrl]);
+        .then((response) => response.json())
+        .then((data) => {
+          setAvailableSlots(data.availableTimeSlots);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    }
+  }, [apiUrl1, selectedDate2]);
 
   function renderFreeSlots() {
     if (!availableSlots) {
@@ -119,12 +126,14 @@ function Provider_Profile() {
     return `${timestamp}-${randomNum}`;
   }
   function formatDateToDDMMYYYY(date) {
-    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
-    return date.toLocaleDateString(undefined, options);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
   }
 
   const reqAppoint = () => {
-    if (!selectedSlot || !homeAddress) {
+    if (!selectedSlot || !homeAddress || !selectedDate2) {
       // One or more required fields are missing, display an error or prevent form submission.
       alert("Please fill in all required fields.");
       return; // Do not continue with the form submission.
@@ -143,9 +152,7 @@ function Provider_Profile() {
       user_id: searchString2,
       dateAdded: formatDateToDDMMYYYY(new Date()),
       appointmentTime: selectedSlot,
-      appointmentDate: formatDateToDDMMYYYY(
-        dayStatus === "Tomorrow" ? tomorrow : today
-      ),
+      appointmentDate: selectedDate2,
       homeAddress: homeAddress,
       note: note,
       status: "Pending",
@@ -154,14 +161,47 @@ function Provider_Profile() {
     axios
       .post(apiUrl2, newAppointment)
       .then((response) => {
-        // navigate(`/view_appointment/${searchString2}`);
-        alert("Service requested successfully!");
+        navigate(
+          `/appointment_details/${searchString2}/${newAppointment.appointmentId}`
+        );
+        setIsOpen(false);
         console.log(response.data);
       })
       .catch((error) => {
         // Handle error
         console.error(error);
       });
+  };
+
+  const CustomDatePickerInput = ({ onClick }) => (
+    <div
+      style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+      onClick={onClick}
+    >
+      <img src="./calendar.svg" alt="" />
+      &nbsp;{" "}
+      {selectedDate ? formatDateToDDMMYYYY(selectedDate) : "Choose a date"}
+    </div>
+  );
+
+  const dateFormatter = (date) => {
+    if (date) {
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
+      const formattedDate = `${month}-${day}-${year}`;
+      setSelectedDate2(formattedDate);
+    }
+  };
+  
+    console.log(selectedDate2);
+  
+
+  const filterPastDates = (date) => {
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0); // Set current date to midnight
+
+    return date >= currentDate;
   };
 
   function validateForm() {
@@ -446,9 +486,13 @@ function Provider_Profile() {
   //     console.error("Error handling chat toggle:", error);
   //   }
   // };
+}
   return (
     <div>
       <Navbar />
+      <br />
+      <br />
+      <br />
       {dataArray
         // .filter((person) => person.user_id === val)
         .map((person, personIndex) => (
@@ -581,15 +625,22 @@ function Provider_Profile() {
                     >
                       <button
                         style={{ marginLeft: "5%" }}
+                        onClick={shareId}
                         className="btn bg-blue-purple btn-sm text-white w-24 h-10"
                       >
                         Share
                       </button>
-                      <button
+                      {/* <button
                         style={{ marginLeft: "3%" }}
                         className="btn bg-blue-purple btn-sm text-white w-24 h-10"
                       >
                         Favorite
+                      </button> */}
+                       
+                      <button style={{ marginLeft: "3%" }}  className="btn bg-blue-purple btn-sm text-white w-24 h-10"  onClick={handleFavoriteClick}>
+                        {isFavorite
+                          ? "Remove Favorites"
+                          : "Add Favorites"}
                       </button>
                       {/* <Link to={`/chats`}> */}
                       {chat.map((c) => {})}
@@ -752,6 +803,23 @@ function Provider_Profile() {
                           Tomorrow
                         </button> */}
                       </div>
+                      <DatePicker
+                        selected={selectedDate}
+                        onChange={(date) => dateFormatter(date)}
+                        dateFormat="MMMM d, yyyy"
+                        placeholderText="Choose a date"
+                        customInput={<CustomDatePickerInput />}
+                        showPopperArrow={false}
+                        popperPlacement="bottom-start"
+                        popperModifiers={{
+                          preventOverflow: {
+                            enabled: true,
+                            escapeWithReference: false,
+                            boundariesElement: "viewport",
+                          },
+                        }}
+                        filterDate={filterPastDates}
+                      />
 
                       <p
                         style={{
@@ -764,19 +832,23 @@ function Provider_Profile() {
                       </p>
 
                       <select
-                        required
-                        className="select select-primary w-full max-w-xs border-blue-purple"
-                        style={{
-                          marginTop: "1%",
-                          marginLeft: "auto",
-                          marginRight: "auto",
-                          borderRadius: "5px",
-                        }}
-                        value={selectedSlot}
-                        onChange={(e) => setSelectedSlot(e.target.value)}
-                      >
-                        {renderFreeSlots()}
-                      </select>
+  required
+  className="select select-primary w-full max-w-xs border-blue-purple"
+  style={{
+    marginTop: "1%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: "5px",
+  }}
+  value={selectedSlot || ""}  // Change here
+  onChange={(e) => setSelectedSlot(e.target.value)}
+>
+  <option disabled value="">
+    Choose a slot
+  </option>
+  {renderFreeSlots()}
+</select>
+
                       <p style={{ marginTop: "5px", fontWeight: "bold" }}>
                         Your Address{" "}
                       </p>
@@ -894,15 +966,16 @@ function Provider_Profile() {
       <br />
       <br />
       <br />
-      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] sm:mb-[85%] md:mt-[-50%] md:w-[110%]">
+      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] md:mt-[-50%] md:w-[110%] sm:mb-[100%] sm:w-[180%] sm:mt-[-215%] sm:ml-[38%] h-[17%] message1 message2   ">
         {showChatDB && (
           <div className="chat-db-wrapper ">
             <Chat_DB />
           </div>
         )}
       </div>
+     
+      
       <Footer />
     </div>
   );
-}
 export default Provider_Profile;

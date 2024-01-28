@@ -27,6 +27,8 @@ import AboutUs from  '../Component/AboutUs/AboutUs';
 import Policy from '../Component/Policy/Policy';
 import Service_History from "../Component/Service_History/Service_History";
 import Chat_DB from "../Component/Chat_DashBoard/Chat_DB";
+import Testing4 from "../Testing4";
+
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +46,10 @@ export const router = createBrowserRouter([
   {
     path: "testing3",
     element: <Testing3 />,
+  },
+  {
+    path: "testing4",
+    element: <Testing4 />,
   },
 
   {

@@ -1,5 +1,5 @@
 import React from "react";
-import "../Navbar/index.css";
+import "../../../src/index.css";
 import { Link } from "react-router-dom";
 const Footer = () => {
   return (

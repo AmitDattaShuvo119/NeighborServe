@@ -75,7 +75,7 @@ select option:disabled {
     top: 37%;
     transform: translateX(-50%);
     width: 380px;
-    height: 380px;
+    height: 420px;
     position: absolute;
     background-color: white;
     border: 1px solid #ccc;
@@ -181,3 +181,21 @@ select option:disabled {
         font-size: 16px;
     }
 }
+
+@media (max-width: 430px) {
+
+   .message1{
+    margin-bottom:[180%];
+    height:[20%];
+   }
+}
+@media (max-width: 390px) {
+
+    .message2{
+     margin-bottom:[180%];
+     height:[30%];
+     width:[120%];
+   
+     /* background-color: #000; */
+    }
+ }

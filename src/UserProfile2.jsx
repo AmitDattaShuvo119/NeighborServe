@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import Navbar from "./Component/Navbar/Navbar";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import useUser from "./hook/useUser";
+import useProvider from "./hook/useProvider";
 import Footer from "./Component/Footer/Footer";
 import "./styles/UserProfile.css";
-const UserProfile = () => {
+const UserProfile2 = () => {
   const userId = localStorage.getItem("userID");
-  const [isUser] = useUser();
+  const [isProvider] = useProvider();
   const { searchString } = useParams();
   const searchString2 = localStorage.getItem("userID");
   const apiUrl = `http://localhost:5000/providers/providersProfile?id=${userId}`;
@@ -218,6 +218,14 @@ const UserProfile = () => {
                     Edit Profile
                   </button>
                   &nbsp;&nbsp;
+                  <Link to={`/verification/${userId}`}>
+                    <button
+                      className="btn btn-active up-modal-btn3"
+                      // onClick={editProfile}
+                    >
+                      Verify me
+                    </button>{" "}
+                  </Link>&nbsp;
                   <button
                     className="btn btn-active up-modal-btn4"
                   >
@@ -301,7 +309,7 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
-      <div className={isUser && ep === true ? "up-modal-container" : "hidden"}>
+      <div className={isProvider && ep === true ? "up-modal-container" : "hidden"}>
         <div className="up-modal-content">
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div style={{ display: "flex", gap: "10px", width: "200px" }}>
@@ -422,4 +430,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default UserProfile2;

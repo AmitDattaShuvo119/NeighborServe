@@ -146,7 +146,8 @@ function PersonList2({ searchString }) {
           aria-label="Loading Spinner"
           data-testid="loader"
         />
-      </div>
+       <div style={{marginTop:"330px"}}><br /> <br />  <br /> <br />  <br /> <br /></div> 
+      </div> 
     );
   }
 
@@ -220,7 +221,6 @@ function PersonList2({ searchString }) {
         .map((person, personIndex) => (
           <ProfileComponent {...person} key={person.id} />
         ))}
-
       {recommendationValue === 1 && (
         <button
           style={{ marginBottom: "10px", marginTop: "10px", color: "white" }}
@@ -261,6 +261,18 @@ function PersonList2({ searchString }) {
               »
             </button>
           )}
+        </div>
+      )}{" "}
+      {recommendationValue === 1 && (
+        <div>
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
+          <br />
         </div>
       )}
     </section>

@@ -24,15 +24,14 @@ const Navbar = ({ setResults, results }) => {
   const [query, setQuery] = useState("");
   console.log("query", query);
 
-
-  console.log("Admin", isAdmin);
-  console.log("provider", isProvider);
-  console.log("user", isUser);
+  // console.log("Admin", isAdmin);
+  // console.log("provider", isProvider);
+  // console.log("user", isUser);
   // console.log("email here: "+user.email);
   // console.log(user);
   const [user_img, setUser_img] = useState(null);
   const apiUrl = user
-    ? `https://neighbor-serve-server.vercel.app/providers/getId/${user.email}`
+    ? `http://localhost:5000/providers/getId/${user.email}`
     : null;
 
   const fetchData = async () => {
@@ -303,7 +302,13 @@ const Navbar = ({ setResults, results }) => {
                       className="dropdown-content z-[1] menu p-2 shadow  mt-3  w-40 "
                     >
                       <li>
-                        <Link to={`/user_profile/${userId}`}>Profile</Link>
+                        {isUser ? (
+                          <Link to={`/user_profile/${userId}`}>Profile</Link>
+                        ) : isProvider ? (
+                          <Link to={`/user_profile2/${userId}`}>Profile</Link>
+                        ) : (
+                          <span>No profile link available</span>
+                        )}
                       </li>
                       <li className="black-text">
                         {isProvider && (
@@ -333,7 +338,7 @@ const Navbar = ({ setResults, results }) => {
                       <li>
                         {isAdmin && (
                           <Link
-                            to={"/dashboard/admindashboard"}
+                            to={"/dashboard/adminverifyprovider"}
                             className="text-sm "
                           >
                             Dashboard
@@ -357,6 +362,11 @@ const Navbar = ({ setResults, results }) => {
                         )}
                       </li>
                       <li>
+                        <Link to={"/chats"} className="text-sm ">
+                          Message
+                        </Link>
+                      </li>
+                      <li>
                         <Link>
                           {user ? (
                             <button className="text-sm " onClick={handleLogOut}>
@@ -370,11 +380,6 @@ const Navbar = ({ setResults, results }) => {
                               Log In
                             </Link>
                           )}
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to={"/chats"} className="text-sm ">
-                          Message
                         </Link>
                       </li>
                     </ul>

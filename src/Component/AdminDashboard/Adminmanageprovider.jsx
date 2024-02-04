@@ -5,7 +5,7 @@ import { Link } from "react-router-dom"
 const Adminmanageprovider = () => {
   const { user } = useAuth()
   const [allprovider, setAllProvider] = useState([])
-  const url = "https://neighbor-serve-server.vercel.app/users/allprovider"
+  const url = "http://localhost:5000/users/allprovider"
 
   useEffect(() => {
     fetch(url)
@@ -15,7 +15,7 @@ const Adminmanageprovider = () => {
   return (
     <div>
       <p className="text-3xl font-bold ml-5 mb-5">All User List</p>
-      <div className="overflow-x-auto w-full">
+      <div className="overflow-x-auto w-full mt-12">
         <table className="table w-full">
           {/* head */}
           <thead>

@@ -15,7 +15,7 @@ const Service_Result = () => {
       <Outlet />
       <br />
       <div className="sr-container0">
-        <div className="sr-container6">
+        {/* <div className="sr-container6">
           <p style={{ color: "black", fontWeight: "bold", fontSize: "20px" }}>
             Sort Result
           </p>
@@ -27,11 +27,11 @@ const Service_Result = () => {
             <option>More verified</option>
             <option>Less verified</option>
           </select>
-        </div>
+        </div> */}
 
         <div className="sr-container1">
           <p style={{ fontWeight: "bold", color: "black" }}>
-            Top 5 Electricians near you
+            Top 5 {searchString}s near you
           </p>
           <div className="text-sm breadcrumbs text-gray-400">
             <ul>

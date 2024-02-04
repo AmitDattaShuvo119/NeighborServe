@@ -5,8 +5,7 @@ To setup our project please follow the steps below -
 
 Clone repositories:
 Clone client-side repository: git clone https://github.com/AmitDattaShuvo119/NeighborServe.git
-Clone server-side repository: git clone https://github.com/AmitDattaShuvo119/NeighborServe-
-Server.git
+Clone server-side repository: git clone https://github.com/AmitDattaShuvo119/NeighborServe-Server.git
 
 Install Node.js and NPM:
 Ensure Node.js and NPM are installed by downloading from the official website.

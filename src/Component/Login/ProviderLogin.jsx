@@ -108,6 +108,7 @@ firebase.initializeApp(firebaseConfig)
   return (
     <>
       <Navbar></Navbar>
+      <br /><br /><br />
       <div>
         <form onSubmit={handleSubmit(handlesignup)}>
           <div className="main1">
@@ -164,7 +165,16 @@ firebase.initializeApp(firebaseConfig)
                       <option value="">Choose option</option>
                       <option value="Electrician">Electrician</option>
                       <option value="Plumber">Plumber</option>
-                      <option value="Handyman">Handyman</option>
+                      <option value="Cleaner">Cleaner</option>
+                      <option value="Painter">Painter</option>
+                      <option value="Pest Service">Pest Service</option>
+                      <option value="Mover">Mover</option>
+                      <option value="HVAC Service">HVAC Service</option>
+                      <option value="Gas Stove Service">Gas Stove Service</option>
+                      <option value="Wall Repairs">Wall Repairs</option>
+                      <option value="Computer Service">Computer Service</option>
+                      <option value="Carpenter">Carpenter</option>
+                      <option value="Car Wash">Car Wash</option>
                     </select>
                   </div>
 
@@ -189,11 +199,14 @@ firebase.initializeApp(firebaseConfig)
                       className="service-reg-field"
                     >
                       <option value="">Select</option>
-                      <option value="badda">Badda</option>
-                      <option value="gulshan">Gulshan</option>
-                      <option value="banani">Banani</option>
-                      <option value="mirpur">Mirpur</option>
-                      <option value="dhanmondi">Dhanmondi</option>
+                      <option value="Badda">Badda</option>
+                      <option value="Gulshan">Gulshan</option>
+                      <option value="Banani">Banani</option>
+                      <option value="Mirpur">Mirpur</option>
+                      <option value="Dhanmondi">Dhanmondi</option>
+                      <option value="Uttora">Uttora</option>
+                      <option value="Baridhara">Baridhara</option>
+                      <option value="Bashundhora">Bashundhora</option>
                     </select>
 
                     <div className="service-reg-label">Password</div>
@@ -285,7 +298,7 @@ firebase.initializeApp(firebaseConfig)
             </div>
           </div>
         </form>
-      </div>
+      </div> <br /><br />
       <Footer></Footer>
     </>
   );

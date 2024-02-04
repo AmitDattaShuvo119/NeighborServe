@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./login.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +10,6 @@ import { AuthContext } from "../../Providers/AuthProviders";
 import { useForm } from "react-hook-form";
 
 function Login() {
-
   // const colors = [
   //   "#efbbff",
   //   "#d896ff",
@@ -26,19 +25,20 @@ function Login() {
   const { googleSignIn } = useContext(AuthContext);
   const { userlogin } = useContext(AuthContext);
   const [err, setErr] = useState("");
+  
 
   const location = useLocation();
 
   const from = location.state?.form?.pathname || "/";
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setColorIndex((prevIndex) => (prevIndex + 1) % colors.length);
-    }, 700);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setColorIndex((prevIndex) => (prevIndex + 1) % colors.length);
+  //   }, 700);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleLogIn = async (data) => {
     data.preventDefault();
@@ -86,11 +86,11 @@ function Login() {
     <>
       <div>
         <Navbar />
-        
+
         <div className="p-12">
           <form onSubmit={handleLogIn}>
             <div className="l-container0 ">
-              <div className="l-container1 mt-12  " >
+              <div className="l-container1 mt-12  ">
                 <div>
                   <p
                     style={{
@@ -119,6 +119,7 @@ function Login() {
                   </p>
 
                   <button
+                    onClick={() => navigate("/reg")}
                     style={{
                       display: "flex",
                       marginLeft: "auto",
@@ -128,7 +129,7 @@ function Login() {
                     }}
                     className="btn w-36"
                   >
-                    <Link to={"/reg"}>Sign up</Link>
+                    Sign up
                   </button>
                 </div>
               </div>
@@ -146,15 +147,27 @@ function Login() {
 
                       // color: colors[colorIndex],
                       // transition: "color 0.5s",
-                    }} className=" mb-4"
+                    }}
+                    className=" mb-4"
                   >
                     Login Your Account
                   </p>
-                  
+
                   <div className="p-2  rounded-lg border w-48 mx-auto ">
-                      <button onClick={handleGoogleSignIn}  type='submit' className="flex mx-auto text-primary font-semibold "> <FcGoogle className="mt-1 mr-1 "/>Google</button>
-                      </div>
-                  <div className="mx-auto text-center m-5 text-gray-400"> ---- or continue with email ----</div>
+                    <button
+                      onClick={handleGoogleSignIn}
+                      type="submit"
+                      className="flex mx-auto text-primary font-semibold "
+                    >
+                      {" "}
+                      <FcGoogle className="mt-1 mr-1 " />
+                      Google
+                    </button>
+                  </div>
+                  <div className="mx-auto text-center m-5 text-gray-400">
+                    {" "}
+                    ---- or continue with email ----
+                  </div>
                   <div className="input-container">
                     <input
                       type="email"
@@ -181,7 +194,9 @@ function Login() {
                   >
                     {/* <button className="l-r">Recover Password?</button> */}
                   </p>
-                   <p className="text-red-500 text-center">{err && "Invalide Email or Password"}</p>
+                  <p className="text-red-500 text-center">
+                    {err && "Invalide Email or Password"}
+                  </p>
                   <button
                     style={{
                       color: "white",

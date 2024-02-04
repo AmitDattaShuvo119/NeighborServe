@@ -1,0 +1,87 @@
+.verification-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 530px;
+
+  }
+  
+  .verification-middle {
+    text-align: center;
+    margin-top: 90px;
+  }
+  
+  .verification-card {
+    
+    padding: 20px;
+    margin-top: 20px;
+    margin: 20px auto;
+
+    width: 500px;
+    height: 300px;
+    
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+.inside2{
+    margin-top: 10px;
+}
+  
+ .phone-number{
+    width: 460px;
+    height: 40px;
+
+    padding: 10px;
+   
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  .continue-btn{
+    background-color: #4C40ED;
+    color: #f4f4f4; 
+     display: flex;
+      margin-left: auto;
+      margin-right: auto;
+      justify-content: center;
+      margin-top: 20px;
+      border: 1px solid rgb(108, 106, 106); 
+      border-radius: 10px;
+      width: 150px;
+
+  }
+  .skip-btn{
+     color: #4C40ED; 
+     display: flex;
+      margin-left: auto;
+      margin-right: auto;
+      justify-content: center;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      background-color: transparent; 
+      border-radius: 10px;
+      width: 150px;
+  }
+
+
+.submit-btn{
+  background-color: #4C40ED;
+  color: #f4f4f4; 
+   display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+    margin-top: 25px;
+    border: 1px solid rgb(108, 106, 106); 
+    border-radius: 10px;
+    width: 150px;
+}
+
+.file-upload{
+  margin-left: 80px;
+}
+
+.buttonSalam{
+  color: black;
+}

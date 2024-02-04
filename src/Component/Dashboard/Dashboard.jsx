@@ -43,11 +43,18 @@ const Dashboard = () => {
                   <p className="text-center font-bold text-xl">{user?.displayName}</p>
                 </div>
 
-                <Link to={"/dashboard/userdashboard"}>
+                {isAdmin && 
+                <Link to={"/dashboard/adminverifyprovider"}>
+                  <button className="btn btn-outline btn-accent mb-5 w-36">
+                    Verify Provider 
+                  </button>
+                </Link>
+}
+                {/* <Link to={"/dashboard/userdashboard"}>
                   <button className="btn btn-outline btn-accent mb-5 w-36">
                     DashBoard
                   </button>
-                </Link>
+                </Link> */}
                 {isAdmin && 
                 <Link to={"/dashboard/adminmanageuser"}>
                   <button className="btn btn-outline btn-accent mb-5 w-36">
@@ -62,20 +69,14 @@ const Dashboard = () => {
                   </button>
                 </Link>
 }
-   {isAdmin && 
-                <Link to={"/dashboard/adminverifyprovider"}>
-                  <button className="btn btn-outline btn-accent mb-5 w-36">
-                    Verify Provider 
-                  </button>
-                </Link>
-}
-{ isAdmin &&
+ 
+{/* { isAdmin &&
                 <Link to={"/dashboard/adminmonitoruser"}>
                   <button className="btn btn-outline btn-accent mb-5 w-36">
                     User Monitor
                   </button>
                 </Link>
-}
+} */}
 { isUser &&
                 <Link to={"/dashboard"}>
                   <button className="btn btn-outline btn-accent mb-5 w-36">

@@ -240,7 +240,7 @@ const Chat_DB = () => {
   return (
     <>
       {/* <Navbar /> */}
-      <div className="xl:h-[20%] xl:w-[60%]  sm:h-[10%] sm:w-[60%] flex justify-center items-center ml-80 ">
+      <div className="xl:h-[10%] xl:w-[60%] md:h-[20%] md:w-[80%] md:text-xs sm:h-[10%] sm:w-[60%] sm:text-xs flex justify-center items-center ml-80 ">
         {userId && (
           <div className="w-[25%] h-screen bg-violet-200 rounded-lg  overflow-y-auto">
             {userDetails.map((conversation, index) => (
@@ -316,9 +316,9 @@ const Chat_DB = () => {
                 </div>
                 <div className="ml-8 my-2">
                   <h3 className="text-xs">{messages?.receiver?.name}</h3>
-                  <p className="text-xs font-semibold">
+                  {/* <p className="text-xs font-semibold">
                     {messages?.receiver?.email}
-                  </p>
+                  </p> */}
                 </div>
               </div>
             )}
@@ -374,12 +374,12 @@ const Chat_DB = () => {
               >
                 <img src={sent} alt="Sent" srcset="" height={20} width={20} />
               </div>{" "}
-              <div
+              {/* <div
                  className={`ml-4 p-2 cursor-pointer bg-light rounded-full
                  ${!message && "pointer-events-none"}`}
               >
                 <img src={plus} alt="plus" srcset="" height={20} width={20} />
-              </div>
+              </div> */}
               <div></div>
             </div>
           )}

@@ -9,9 +9,6 @@ import Service_Result from "../Service_Result";
 import Provider_Profile from "../Provider_Profile";
 import Appointment from "../Component/Appointment";
 import AppointmentDetails from "../Component/AppointmentDetails";
-import Testing from "../Testing";
-import Testing2 from "../Testing2";
-import Testing3 from "../Testing3";
 import TypeProvider from "../Component/TypeProvider/TypeProvider";
 import ProviderDetails from "../Component/ProviderDetails/ProviderDetails";
 import ProviderAccountDetails from "../Component/ProviderAccountDetails/ProviderAccountDetails";
@@ -23,33 +20,29 @@ import Adminmanageprovider from "../Component/AdminDashboard/Adminmanageprovider
 import AdminVerifyProvider from "../Component/AdminDashboard/AdminVerifyProvider";
 import ReqAppointment from "../Component/ReqAppointment";
 import UserProfile from "../UserProfile";
-import AboutUs from  '../Component/AboutUs/AboutUs';
-import Policy from '../Component/Policy/Policy';
+import UserProfile2 from "../UserProfile2";
+import AboutUs from "../Component/AboutUs/AboutUs";
+import Policy from "../Component/Policy/Policy";
 import Service_History from "../Component/Service_History/Service_History";
 import Chat_DB from "../Component/Chat_DashBoard/Chat_DB";
-import Testing4 from "../Testing4";
-
+import Verification from "../Verification";
+import Membership from "../Component/Membership/Membership";
+import Details from "../Component/AdminDashboard/Details";
+import FAQ from "../Component/FAQ/FAQ";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App></App>,
   },
+
   {
-    path: "testing",
-    element: <Testing />,
+    path: "/membership",
+    element: <Membership />,
   },
   {
-    path: "testing2",
-    element: <Testing2 />,
-  },
-  {
-    path: "testing3",
-    element: <Testing3 />,
-  },
-  {
-    path: "testing4",
-    element: <Testing4 />,
+    path: "/faq",
+    element: <FAQ />,
   },
 
   {
@@ -58,14 +51,17 @@ export const router = createBrowserRouter([
   },
   {
     path: "/user_profile/:userId",
-    element: <UserProfile/>,
+    element: <UserProfile />,
   },
-
+  {
+    path: "/user_profile2/:userId",
+    element: <UserProfile2 />,
+  },
   {
     path: "browse_service",
     element: <Browse_service></Browse_service>,
   },
-  
+
   {
     path: "search_result/:searchString",
     element: <Service_Result></Service_Result>,
@@ -74,7 +70,10 @@ export const router = createBrowserRouter([
     path: "provider_profile/:searchString",
     element: <Provider_Profile />,
   },
-
+  {
+    path: "/verification/:userId",
+    element: <Verification />,
+  },
   {
     path: "view_appointment/:searchString",
     element: <Appointment />,
@@ -125,35 +124,40 @@ export const router = createBrowserRouter([
   },
 
   {
-      path : 'dashboard',
-      element : <Dashboard></Dashboard>,
-      children : [
+    path: "dashboard",
+    element: <Dashboard></Dashboard>,
+    children: [
+      {
+        path: "userdashboard",
+        element: <UserDashboard></UserDashboard>,
+      },
+      {
+        path: "admindashboard",
+        element: <AdminDashboard></AdminDashboard>,
+      },
+      {
+        path: "providerdashboard",
+        element: <ProviderDashboard></ProviderDashboard>,
+      },
+      {
+        path: "adminmanageuser",
+        element: <AdminManageuser></AdminManageuser>,
+      },
+      {
+        path: "adminmanageprovider",
+        element: <Adminmanageprovider></Adminmanageprovider>,
+      },
 
-         {
-          path : 'userdashboard',
-          element: <UserDashboard></UserDashboard>
-         },
-         {
-           path : 'admindashboard',
-           element : <AdminDashboard></AdminDashboard>
-         },
-        {
-          path: 'providerdashboard',
-          element : <ProviderDashboard></ProviderDashboard>
-        },
-        {
-           path : 'adminmanageuser',
-           element : <AdminManageuser></AdminManageuser>
-        },
-        {
-           path : 'adminmanageprovider',
-           element : <Adminmanageprovider></Adminmanageprovider>
-        },
-        
-        {
-           path : 'adminverifyprovider',
-           element : <AdminVerifyProvider></AdminVerifyProvider>
-        }
-      ]
-  }
+      {
+        path: "adminverifyprovider",
+        element: <AdminVerifyProvider></AdminVerifyProvider>,
+      },
+      {
+        path: "adminverifyprovider/view/:id",
+        element: <Details></Details>,
+        loader: ({ params }) =>
+          fetch(`http://localhost:5000/users/view/${params.id}`),
+      },
+    ],
+  },
 ]);

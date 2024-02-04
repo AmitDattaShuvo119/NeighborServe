@@ -6,7 +6,7 @@ const AdminManageuser = () => {
 
 const {user} = useAuth();
     const [alluser, setAllUser] = useState([]);
-    const url ="https://neighbor-serve-server.vercel.app/users/alluser"
+    const url ="http://localhost:5000/users/alluser"
 
     useEffect(() => {
 
@@ -17,7 +17,7 @@ const {user} = useAuth();
   return (
     <div>
             <p className="text-3xl font-bold ml-5 mb-5">All User List</p>
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto w-full mt-12">
                 <table className="table w-full">
                     {/* head */}
                     <thead >

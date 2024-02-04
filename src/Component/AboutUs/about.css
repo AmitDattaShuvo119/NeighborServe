@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Söhne';
+    src: url('./TestSöhne-Buch.otf') format('opentype');
+    /* Use 'truetype' for TTF files */
+}
+
+
+.about_us{
+    font-family: "Söhne", sans-serif;
+}

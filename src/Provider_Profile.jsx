@@ -13,9 +13,10 @@ import useAuth from "./hook/useAuth";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./NordDatePicker.css";
+// import { v4 as uuidv4 } from "uuid";
 
 function Provider_Profile() {
-  const { user} = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedSlot, setSelectedSlot] = useState(""); // State to store selected time slot
   const [note, setNote] = useState("");
@@ -46,41 +47,28 @@ function Provider_Profile() {
     setConvo,
     showChatDB,
     setShowChatDB,
-  
-
   } = useContext(AuthContext);
-  const apiUrl = `http://localhost:5000/providers/providersProfile?id=${searchString}`; // Replace with your API endpoint
   const [isFavorite, setIsFavorite] = useState(false);
   const userEmail = user?.email;
- const handleFavoriteClick = async () => {
-   try {
-     const response = await axios.post("http://localhost:5000/users/addFavoriteProvider", {
-       userEmail,
-       providerId: searchString,
-     });
-     if (response.status === 200) {
+  const handleFavoriteClick = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/users/addFavoriteProvider",
+        {
+          userEmail,
+          providerId: searchString,
+        }
+      );
+      if (response.status === 200) {
+        setIsFavorite(!isFavorite);
+      }
+    } catch (error) {
+      console.log("Error adding favorite provider");
+    }
+  };
 
-       setIsFavorite(!isFavorite);
-     }
-   } catch (error) {
-     console.log("Error adding favorite provider");
-   }
- };
+  const apiUrl = `http://localhost:5000/providers/providersProfile?id=${searchString}`; // Replace with your API endpoint
 
-
- useEffect(() => {
-   fetch(apiUrl)
-     .then((response) => response.json())
-     .then((data) => {
-       setDataArray(data);
-     })
-     .catch((error) => {
-       console.error("Error fetching data:", error);
-     });
- }, []);
- console.log("Data Array: ",dataArray);
-
- const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
   useEffect(() => {
     fetch(apiUrl)
       .then((response) => response.json())
@@ -91,8 +79,9 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
-  console.log("Data Array: ",dataArray);
- 
+  console.log("Data Array: ", dataArray);
+
+  const apiUrl2 = `http://localhost:5000/providers/providersProfile?id=${searchString2}`; // Replace with your API endpoint
 
   useEffect(() => {
     fetch(apiUrl2)
@@ -104,7 +93,7 @@ function Provider_Profile() {
         console.error("Error fetching data:", error);
       });
   }, []);
-// console.log("Data Array: ",dataArray2);
+  // console.log("Data Array: ",dataArray2);
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -125,8 +114,7 @@ function Provider_Profile() {
 
   useEffect(() => {
     if (selectedDate2) {
-     
-    fetch(apiUrl1)
+      fetch(apiUrl1)
         .then((response) => response.json())
         .then((data) => {
           setAvailableSlots(data.availableTimeSlots);
@@ -226,9 +214,8 @@ function Provider_Profile() {
       setSelectedDate2(formattedDate);
     }
   };
-  
-    console.log(selectedDate2);
-  
+
+  console.log(selectedDate2);
 
   const filterPastDates = (date) => {
     const currentDate = new Date();
@@ -240,7 +227,6 @@ function Provider_Profile() {
   function validateForm() {
     return selectedSlot && homeAddress && note;
   }
-
 
   console.log("Chat: ", chat);
   console.log("msg: ", messages);
@@ -273,7 +259,7 @@ function Provider_Profile() {
     // console.log("ConversationId of FetchConversations", id);
     FetchConversations(searchString2);
   }, []);
-  console.log("CONVO: ",convo);
+  console.log("CONVO: ", convo);
   useEffect(() => {
     const fetchChat = async () => {
       const res = await fetch(
@@ -290,8 +276,6 @@ function Provider_Profile() {
     };
     fetchChat();
   }, []);
-
-
 
   const FetchMessages = async (conversationId, receiver) => {
     try {
@@ -319,7 +303,6 @@ function Provider_Profile() {
     }
   };
 
-  
   //Shows output but Duplicate Value not prevent///////////////This is the correct possible version////////////
   const createNewConversation = async (receiver) => {
     try {
@@ -372,62 +355,7 @@ function Provider_Profile() {
       console.error("Error creating or fetching conversation:", error);
     }
   };
-  
- 
-  // const createNewConversation = async (receiver) => {
-  //   try {
-  //     console.log("Creating new conversation with receiver:", receiver);
-  
-  //     // Check if a conversation already exists with the same members
-  //     const existingConversation = convo.find(
-  //       (c) =>
-  //         c.members
-  //           .sort()
-  //           .toString() === [searchString2, receiver.id].sort().toString()
-  //     );
-  
-  //     console.log("Existing Conversation:", existingConversation);
-  
-  //     if (existingConversation) {
-  //       // Conversation already exists, set it as the current conversation
-  //       setCurrentConversation(existingConversation);
-  
-  //       // Fetch messages for the existing conversation
-  //       await FetchMessages(existingConversation._id, receiver);
-  //       return;
-  //     }
-  
-  //     console.log("Conversation does not exist, creating a new one...");
-  
-  //     // Conversation does not exist, create a new conversation
-  //     const res = await fetch("http://localhost:5000/chatApp/conversations", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         senderId: searchString2,
-  //         receiverId: receiver.id,
-  //       }),
-  //     });
-  
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! Status: ${res.status}`);
-  //     }
-  
-  //     const resultData = await res.json();
-  //     console.log("New Conversation Created:", resultData);
-  
-  //     // Fetch messages for the new conversation
-  //     await FetchMessages(resultData.insertedId, receiver);
-  
-  //     // Set the new conversation as the current conversation
-  //     setCurrentConversation(resultData.insertedId);
-  //   } catch (error) {
-  //     console.error("Error creating or fetching conversation:", error);
-  //   }
-  // };
-  ////Only for testing
+
   let isChatClosing = false;
 
   // // Function to close the chat
@@ -486,43 +414,6 @@ function Provider_Profile() {
     setShowChatDB(!showChatDB);
   };
 
-  // const handleToggleChatDB = async (receiver) => {
-  //   try {
-  //     // Toggle the chat display
-  //     setShowChatDB(!showChatDB);
-  //     console.log("Receiver:", receiver);
-  
-  //     // Check if a conversation with the selected receiver already exists
-  //     const existingConversation = chat.find(
-  //       (c) => c?.user?.receiverId === receiver?.id
-  //     );
-  
-  //     console.log("Existing Conversation:", existingConversation);
-  
-  //     if (existingConversation) {
-  //       // Conversation already exists, set it as the current conversation
-  //       setCurrentConversation(existingConversation?.conversationId);
-  
-  //       // Fetch messages for the existing conversation
-  //       await FetchMessages(existingConversation?.conversationId, receiver);
-  //     } else {
-  //       // Conversation does not exist, create a new conversation
-  //       const newConversation = await createNewConversation(receiver);
-  
-  //       // Set the new conversation as the current conversation
-  //       setCurrentConversation(newConversation?.insertedId);
-  
-  //       // Fetch messages for the new conversation
-  //       await FetchMessages(newConversation?.insertedId, receiver);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error handling chat toggle:", error);
-  //   }
-  // };
-  
-
-
-
   const shareId = () => {
     const currentLink = window.location.href;
 
@@ -549,6 +440,7 @@ function Provider_Profile() {
       document.body.removeChild(tempInput);
     }
   };
+
   return (
     <div>
       <Navbar />
@@ -698,11 +590,12 @@ function Provider_Profile() {
                       >
                         Favorite
                       </button> */}
-                       
-                      <button style={{ marginLeft: "3%" }}  className="btn bg-blue-purple btn-sm text-white w-24 h-10"  onClick={handleFavoriteClick}>
-                        {isFavorite
-                          ? "Remove Favorites"
-                          : "Add Favorites"}
+                      <button
+                        style={{ marginLeft: "3%" }}
+                        className="btn bg-blue-purple btn-sm text-white w-24 h-10"
+                        onClick={handleFavoriteClick}
+                      >
+                        {isFavorite ? "Remove Favorites" : "Add Favorites"}
                       </button>
                       {/* <Link to={`/chats`}> */}
                       {chat.map((c) => {})}
@@ -710,14 +603,12 @@ function Provider_Profile() {
                         style={{ marginLeft: "3%" }}
                         className="btn bg-blue-purple btn-sm text-white w-24 h-10"
                         onClick={async () => {
-                        
-                          
                           const user = {
                             name: person.user_fullname,
                             email: person.user_email,
                             id: person._id,
                           };
-                          
+
                           handleToggleChatDB();
                           console.log(searchString2);
 
@@ -736,7 +627,7 @@ function Provider_Profile() {
                       >
                         {showChatDB ? "Close Chat" : "Message"}
                       </button>
-                      ;{/* </Link> */}
+                      {/* </Link> */}
                     </div>
                   </div>
                 </div>
@@ -894,22 +785,22 @@ function Provider_Profile() {
                       </p>
 
                       <select
-  required
-  className="select select-primary w-full max-w-xs border-blue-purple"
-  style={{
-    marginTop: "1%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: "5px",
-  }}
-  value={selectedSlot || ""}  // Change here
-  onChange={(e) => setSelectedSlot(e.target.value)}
->
-  <option disabled value="">
-    Choose a slot
-  </option>
-  {renderFreeSlots()}
-</select>
+                        required
+                        className="select select-primary w-full max-w-xs border-blue-purple"
+                        style={{
+                          marginTop: "1%",
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                          borderRadius: "5px",
+                        }}
+                        value={selectedSlot || ""} // Change here
+                        onChange={(e) => setSelectedSlot(e.target.value)}
+                      >
+                        <option disabled value="">
+                          Choose a slot
+                        </option>
+                        {renderFreeSlots()}
+                      </select>
 
                       <p style={{ marginTop: "5px", fontWeight: "bold" }}>
                         Your Address{" "}
@@ -1028,18 +919,16 @@ function Provider_Profile() {
       <br />
       <br />
       <br />
-      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] md:mt-[-50%] md:w-[110%] sm:mb-[100%] sm:w-[180%] sm:mt-[-215%] sm:ml-[38%] h-[17%] message1 message2   ">
+      <div className="xl:ml-[30%] xl:mb-[85%] xl:mt-[-30%] xl:w-[90%] md:ml-[10%] md:mt-[-50%] md:w-[110%] sm:mb-[100%] sm:w-[180%] sm:mt-[-215%] sm:ml-[38%] h-[11%] message1 message2   ">
         {showChatDB && (
-          <div className="chat-db-wrapper ">
+          <div className="chat-db-wrapper" style={{ marginLeft: "20px" }}>
             <Chat_DB />
           </div>
         )}
       </div>
-     
-      
+
       <Footer />
     </div>
   );
-
-        }
+}
 export default Provider_Profile;

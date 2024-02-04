@@ -1,3 +1,5 @@
+#NeighborServe-Client Side
+
 This proposed web application is designed to address the identified gap between service seekers and local providers in Bangladesh. Leveraging the advancements in technology, particularly the growing internet usage and the integration of machine learning models, the platform adopts a community-based approach. The implementation involves a two-sided business model, incorporating machine learning models such as content-based collaborative filtering and BERT for smart recommendations and sentiment analysis of user reviews. This approach aims to enhance user experience, improve service accessibility, and contribute to the realization of a Smart Bangladesh.
 
 
